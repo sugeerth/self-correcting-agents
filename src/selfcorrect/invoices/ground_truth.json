@@ -1,0 +1,866 @@
+{
+  "inv_001": {
+    "invoice_number": "2025-34535",
+    "vendor": "Stonebridge Legal Associates",
+    "date": "2025-01-16",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "Whiteboard, magnetic, 120x90cm",
+        "quantity": 1,
+        "unit_price": 358.43,
+        "amount": 358.43
+      },
+      {
+        "description": "Espresso beans, 1kg, dark roast",
+        "quantity": 11,
+        "unit_price": 1821.4,
+        "amount": 20035.4
+      },
+      {
+        "description": "Logo redesign, two revision rounds",
+        "quantity": 1,
+        "unit_price": 1579.38,
+        "amount": 1579.38
+      }
+    ],
+    "subtotal": 21973.21,
+    "tax": 4174.91,
+    "total": 26148.12
+  },
+  "inv_002": {
+    "invoice_number": "INV/635/2025",
+    "vendor": "Crestview Security Solutions",
+    "date": "2025-09-17",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 7,
+        "unit_price": 723.32,
+        "amount": 5063.24
+      },
+      {
+        "description": "Monthly cloud hosting, region EU-1",
+        "quantity": 12,
+        "unit_price": 2062.83,
+        "amount": 24753.96
+      }
+    ],
+    "subtotal": 29817.2,
+    "tax": 2609.01,
+    "total": 32426.21
+  },
+  "inv_003": {
+    "invoice_number": "INV/872/2025",
+    "vendor": "Apex Electrical Wholesale",
+    "date": "2025-06-07",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "CCTV camera, outdoor dome",
+        "quantity": 8,
+        "unit_price": 158.72,
+        "amount": 1269.76
+      },
+      {
+        "description": "Annual SaaS license, Pro tier",
+        "quantity": 9,
+        "unit_price": 1988.51,
+        "amount": 17896.59
+      },
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 6,
+        "unit_price": 49.21,
+        "amount": 295.26
+      },
+      {
+        "description": "Whiteboard, magnetic, 120x90cm",
+        "quantity": 4,
+        "unit_price": 2094.16,
+        "amount": 8376.64
+      },
+      {
+        "description": "Pallet freight, zone 3",
+        "quantity": 3,
+        "unit_price": 2422.76,
+        "amount": 7268.28
+      },
+      {
+        "description": "Toner cartridge, black, high yield",
+        "quantity": 1,
+        "unit_price": 1094.29,
+        "amount": 1094.29
+      }
+    ],
+    "subtotal": 36200.82,
+    "tax": 3167.57,
+    "total": 39368.39
+  },
+  "inv_004": {
+    "invoice_number": "INV/838/2025",
+    "vendor": "Copperfield Stationers",
+    "date": "2025-02-02",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Industrial shelving unit, 5-tier",
+        "quantity": 6,
+        "unit_price": 2335.03,
+        "amount": 14010.18
+      },
+      {
+        "description": "Safety goggles, anti-fog, 10-pack",
+        "quantity": 12,
+        "unit_price": 1199.85,
+        "amount": 14398.2
+      },
+      {
+        "description": "Cat6 patch cable, 10m",
+        "quantity": 11,
+        "unit_price": 63.66,
+        "amount": 700.26
+      },
+      {
+        "description": "Server rack rental, per month",
+        "quantity": 2,
+        "unit_price": 1164.69,
+        "amount": 2329.38
+      }
+    ],
+    "subtotal": 31438.02,
+    "tax": 6287.6,
+    "total": 37725.62
+  },
+  "inv_005": {
+    "invoice_number": "INV-2025-3099",
+    "vendor": "Northwind Logistics GmbH",
+    "date": "2025-08-11",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Document translation, per 1000 words",
+        "quantity": 10,
+        "unit_price": 215.25,
+        "amount": 2152.5
+      },
+      {
+        "description": "A4 copy paper, 500 sheets",
+        "quantity": 12,
+        "unit_price": 20.78,
+        "amount": 249.36
+      },
+      {
+        "description": "Catered lunch, per head",
+        "quantity": 2,
+        "unit_price": 113.58,
+        "amount": 227.16
+      },
+      {
+        "description": "CCTV camera, outdoor dome",
+        "quantity": 10,
+        "unit_price": 573.61,
+        "amount": 5736.1
+      }
+    ],
+    "subtotal": 8365.12,
+    "tax": 1589.37,
+    "total": 9954.49
+  },
+  "inv_006": {
+    "invoice_number": "2025-29778",
+    "vendor": "Harbor & Pine Furnishings",
+    "date": "2025-05-17",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "On-site training session, half day",
+        "quantity": 1,
+        "unit_price": 1190.05,
+        "amount": 1190.05
+      },
+      {
+        "description": "Toner cartridge, black, high yield",
+        "quantity": 4,
+        "unit_price": 28.56,
+        "amount": 114.24
+      },
+      {
+        "description": "Monthly cloud hosting, region EU-1",
+        "quantity": 5,
+        "unit_price": 1242.0,
+        "amount": 6210.0
+      },
+      {
+        "description": "Espresso beans, 1kg, dark roast",
+        "quantity": 4,
+        "unit_price": 1124.36,
+        "amount": 4497.44
+      },
+      {
+        "description": "Annual SaaS license, Pro tier",
+        "quantity": 11,
+        "unit_price": 2012.6,
+        "amount": 22138.6
+      }
+    ],
+    "subtotal": 34150.33,
+    "tax": 6488.56,
+    "total": 40638.89
+  },
+  "inv_007": {
+    "invoice_number": "2025-52316",
+    "vendor": "Summit Ridge Training Partners",
+    "date": "2025-05-28",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Window cleaning, ground floor",
+        "quantity": 11,
+        "unit_price": 2174.83,
+        "amount": 23923.13
+      },
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 6,
+        "unit_price": 560.12,
+        "amount": 3360.72
+      },
+      {
+        "description": "Pallet freight, zone 3",
+        "quantity": 1,
+        "unit_price": 545.52,
+        "amount": 545.52
+      },
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 11,
+        "unit_price": 1295.62,
+        "amount": 14251.82
+      }
+    ],
+    "subtotal": 42081.19,
+    "tax": 3682.1,
+    "total": 45763.29
+  },
+  "inv_008": {
+    "invoice_number": "2025-46577",
+    "vendor": "Granite Peak Consulting LLC",
+    "date": "2025-11-09",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 8,
+        "unit_price": 2437.82,
+        "amount": 19502.56
+      },
+      {
+        "description": "Soil sample analysis, standard panel",
+        "quantity": 10,
+        "unit_price": 1309.94,
+        "amount": 13099.4
+      },
+      {
+        "description": "Ergonomic task chair",
+        "quantity": 11,
+        "unit_price": 1239.89,
+        "amount": 13638.79
+      }
+    ],
+    "subtotal": 46240.75,
+    "tax": 3352.45,
+    "total": 49593.2
+  },
+  "inv_009": {
+    "invoice_number": "2025-15627",
+    "vendor": "Tidewater Marine Parts",
+    "date": "2025-03-25",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "Toner cartridge, black, high yield",
+        "quantity": 10,
+        "unit_price": 1850.29,
+        "amount": 18502.9
+      },
+      {
+        "description": "Soil sample analysis, standard panel",
+        "quantity": 6,
+        "unit_price": 1369.76,
+        "amount": 8218.56
+      },
+      {
+        "description": "Whiteboard, magnetic, 120x90cm",
+        "quantity": 2,
+        "unit_price": 920.85,
+        "amount": 1841.7
+      },
+      {
+        "description": "Nitrile gloves, box of 100",
+        "quantity": 8,
+        "unit_price": 200.74,
+        "amount": 1605.92
+      },
+      {
+        "description": "Ergonomic task chair",
+        "quantity": 1,
+        "unit_price": 863.74,
+        "amount": 863.74
+      },
+      {
+        "description": "Logo redesign, two revision rounds",
+        "quantity": 7,
+        "unit_price": 2416.05,
+        "amount": 16912.35
+      }
+    ],
+    "subtotal": 47945.17,
+    "tax": 9589.03,
+    "total": 57534.2
+  },
+  "inv_010": {
+    "invoice_number": "2025-13070",
+    "vendor": "Maple Leaf Janitorial Services",
+    "date": "2025-09-04",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Brochure printing, 250 copies",
+        "quantity": 5,
+        "unit_price": 235.01,
+        "amount": 1175.05
+      },
+      {
+        "description": "Server rack rental, per month",
+        "quantity": 2,
+        "unit_price": 453.5,
+        "amount": 907.0
+      },
+      {
+        "description": "Monthly cloud hosting, region EU-1",
+        "quantity": 7,
+        "unit_price": 1594.58,
+        "amount": 11162.06
+      }
+    ],
+    "subtotal": 13244.11,
+    "tax": 1158.86,
+    "total": 14402.97
+  },
+  "inv_011": {
+    "invoice_number": "2025-28527",
+    "vendor": "Bluegrass Catering Group",
+    "date": "2025-01-11",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 10,
+        "unit_price": 27.67,
+        "amount": 276.7
+      },
+      {
+        "description": "Safety goggles, anti-fog, 10-pack",
+        "quantity": 8,
+        "unit_price": 1376.29,
+        "amount": 11010.32
+      },
+      {
+        "description": "Soil sample analysis, standard panel",
+        "quantity": 6,
+        "unit_price": 1056.81,
+        "amount": 6340.86
+      }
+    ],
+    "subtotal": 17627.88,
+    "tax": 881.39,
+    "total": 18509.27
+  },
+  "inv_012": {
+    "invoice_number": "INV/319/2025",
+    "vendor": "Silverline Translation Bureau",
+    "date": "2025-06-18",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 6,
+        "unit_price": 500.43,
+        "amount": 3002.58
+      },
+      {
+        "description": "Cat6 patch cable, 10m",
+        "quantity": 6,
+        "unit_price": 682.69,
+        "amount": 4096.14
+      },
+      {
+        "description": "Wireless presenter remote",
+        "quantity": 10,
+        "unit_price": 652.96,
+        "amount": 6529.6
+      },
+      {
+        "description": "Toner cartridge, black, high yield",
+        "quantity": 12,
+        "unit_price": 1199.69,
+        "amount": 14396.28
+      }
+    ],
+    "subtotal": 28024.6,
+    "tax": 2452.15,
+    "total": 30476.75
+  },
+  "inv_013": {
+    "invoice_number": "INV-2025-3288",
+    "vendor": "Brightline Software Ltd.",
+    "date": "2025-05-12",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Document translation, per 1000 words",
+        "quantity": 8,
+        "unit_price": 2055.5,
+        "amount": 16444.0
+      },
+      {
+        "description": "Whiteboard, magnetic, 120x90cm",
+        "quantity": 3,
+        "unit_price": 952.73,
+        "amount": 2858.19
+      },
+      {
+        "description": "Nitrile gloves, box of 100",
+        "quantity": 10,
+        "unit_price": 109.45,
+        "amount": 1094.5
+      }
+    ],
+    "subtotal": 20396.69,
+    "tax": 1478.76,
+    "total": 21875.45
+  },
+  "inv_014": {
+    "invoice_number": "INV-2025-4421",
+    "vendor": "Velocity Cloud Services Inc.",
+    "date": "2025-01-28",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 9,
+        "unit_price": 380.78,
+        "amount": 3427.02
+      },
+      {
+        "description": "Standing desk, oak finish",
+        "quantity": 1,
+        "unit_price": 201.98,
+        "amount": 201.98
+      },
+      {
+        "description": "Soil sample analysis, standard panel",
+        "quantity": 3,
+        "unit_price": 853.92,
+        "amount": 2561.76
+      }
+    ],
+    "subtotal": 6190.76,
+    "tax": 309.54,
+    "total": 6500.3
+  },
+  "inv_015": {
+    "invoice_number": "2025-28889",
+    "vendor": "Ironworks Machining Co.",
+    "date": "2025-11-26",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Nitrile gloves, box of 100",
+        "quantity": 9,
+        "unit_price": 1740.23,
+        "amount": 15662.07
+      },
+      {
+        "description": "Safety goggles, anti-fog, 10-pack",
+        "quantity": 5,
+        "unit_price": 2489.69,
+        "amount": 12448.45
+      },
+      {
+        "description": "Window cleaning, ground floor",
+        "quantity": 1,
+        "unit_price": 962.17,
+        "amount": 962.17
+      },
+      {
+        "description": "Toner cartridge, black, high yield",
+        "quantity": 3,
+        "unit_price": 735.11,
+        "amount": 2205.33
+      },
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 2,
+        "unit_price": 2324.01,
+        "amount": 4648.02
+      },
+      {
+        "description": "Consulting hours, backend integration",
+        "quantity": 4,
+        "unit_price": 878.54,
+        "amount": 3514.16
+      }
+    ],
+    "subtotal": 39440.2,
+    "tax": 7493.64,
+    "total": 46933.84
+  },
+  "inv_016": {
+    "invoice_number": "2025-23648",
+    "vendor": "Juniper Lab Supplies",
+    "date": "2025-09-19",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Server rack rental, per month",
+        "quantity": 4,
+        "unit_price": 782.56,
+        "amount": 3130.24
+      },
+      {
+        "description": "Standing desk, oak finish",
+        "quantity": 8,
+        "unit_price": 856.0,
+        "amount": 6848.0
+      },
+      {
+        "description": "Annual SaaS license, Pro tier",
+        "quantity": 10,
+        "unit_price": 68.91,
+        "amount": 689.1
+      },
+      {
+        "description": "Wireless presenter remote",
+        "quantity": 3,
+        "unit_price": 73.4,
+        "amount": 220.2
+      },
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 9,
+        "unit_price": 18.78,
+        "amount": 169.02
+      }
+    ],
+    "subtotal": 11056.56,
+    "tax": 2211.31,
+    "total": 13267.87
+  },
+  "inv_017": {
+    "invoice_number": "2025-94716",
+    "vendor": "Atlas Geo Survey Services",
+    "date": "2025-06-24",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "USB-C docking station",
+        "quantity": 1,
+        "unit_price": 2059.1,
+        "amount": 2059.1
+      },
+      {
+        "description": "Industrial shelving unit, 5-tier",
+        "quantity": 3,
+        "unit_price": 560.62,
+        "amount": 1681.86
+      },
+      {
+        "description": "Cat6 patch cable, 10m",
+        "quantity": 9,
+        "unit_price": 1541.13,
+        "amount": 13870.17
+      },
+      {
+        "description": "Monthly cloud hosting, region EU-1",
+        "quantity": 11,
+        "unit_price": 605.0,
+        "amount": 6655.0
+      },
+      {
+        "description": "Server rack rental, per month",
+        "quantity": 12,
+        "unit_price": 574.73,
+        "amount": 6896.76
+      }
+    ],
+    "subtotal": 31162.89,
+    "tax": 5920.95,
+    "total": 37083.84
+  },
+  "inv_018": {
+    "invoice_number": "INV-2025-2809",
+    "vendor": "Lumen Creative Studio",
+    "date": "2025-08-17",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 10,
+        "unit_price": 2413.11,
+        "amount": 24131.1
+      },
+      {
+        "description": "Ergonomic task chair",
+        "quantity": 6,
+        "unit_price": 299.01,
+        "amount": 1794.06
+      },
+      {
+        "description": "A4 copy paper, 500 sheets",
+        "quantity": 5,
+        "unit_price": 186.63,
+        "amount": 933.15
+      },
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 3,
+        "unit_price": 1561.03,
+        "amount": 4683.09
+      },
+      {
+        "description": "Annual SaaS license, Pro tier",
+        "quantity": 2,
+        "unit_price": 1115.54,
+        "amount": 2231.08
+      }
+    ],
+    "subtotal": 33772.48,
+    "tax": 2701.8,
+    "total": 36474.28
+  },
+  "inv_019": {
+    "invoice_number": "2025-22844",
+    "vendor": "Meridian Industrial Tools",
+    "date": "2025-12-21",
+    "currency": "GBP",
+    "line_items": [
+      {
+        "description": "USB-C docking station",
+        "quantity": 9,
+        "unit_price": 896.87,
+        "amount": 8071.83
+      },
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 6,
+        "unit_price": 475.42,
+        "amount": 2852.52
+      },
+      {
+        "description": "Logo redesign, two revision rounds",
+        "quantity": 4,
+        "unit_price": 1250.28,
+        "amount": 5001.12
+      }
+    ],
+    "subtotal": 15925.47,
+    "tax": 1154.6,
+    "total": 17080.07
+  },
+  "inv_020": {
+    "invoice_number": "2025-18902",
+    "vendor": "Cascade Office Supply Co.",
+    "date": "2025-12-19",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 10,
+        "unit_price": 2168.9,
+        "amount": 21689.0
+      },
+      {
+        "description": "USB-C docking station",
+        "quantity": 6,
+        "unit_price": 40.65,
+        "amount": 243.9
+      },
+      {
+        "description": "Consulting hours, backend integration",
+        "quantity": 4,
+        "unit_price": 703.36,
+        "amount": 2813.44
+      }
+    ],
+    "subtotal": 24746.34,
+    "tax": 2165.3,
+    "total": 26911.64
+  },
+  "inv_021": {
+    "invoice_number": "INV-2025-8710",
+    "vendor": "Foxglove Botanical Wholesale",
+    "date": "2025-01-26",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Window cleaning, ground floor",
+        "quantity": 7,
+        "unit_price": 2001.4,
+        "amount": 14009.8
+      },
+      {
+        "description": "On-site training session, half day",
+        "quantity": 11,
+        "unit_price": 1374.97,
+        "amount": 15124.67
+      },
+      {
+        "description": "First aid kit refill, workplace",
+        "quantity": 10,
+        "unit_price": 2141.25,
+        "amount": 21412.5
+      },
+      {
+        "description": "Ergonomic task chair",
+        "quantity": 11,
+        "unit_price": 1658.09,
+        "amount": 18238.99
+      },
+      {
+        "description": "Document translation, per 1000 words",
+        "quantity": 3,
+        "unit_price": 730.4,
+        "amount": 2191.2
+      },
+      {
+        "description": "Cat6 patch cable, 10m",
+        "quantity": 8,
+        "unit_price": 1826.11,
+        "amount": 14608.88
+      }
+    ],
+    "subtotal": 85586.04,
+    "tax": 16261.35,
+    "total": 101847.39
+  },
+  "inv_022": {
+    "invoice_number": "2025-62547",
+    "vendor": "Riverbend Print & Mail",
+    "date": "2025-07-07",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Espresso beans, 1kg, dark roast",
+        "quantity": 8,
+        "unit_price": 2.37,
+        "amount": 18.96
+      },
+      {
+        "description": "Document translation, per 1000 words",
+        "quantity": 12,
+        "unit_price": 604.7,
+        "amount": 7256.4
+      },
+      {
+        "description": "Nitrile gloves, box of 100",
+        "quantity": 1,
+        "unit_price": 907.3,
+        "amount": 907.3
+      }
+    ],
+    "subtotal": 8182.66,
+    "tax": 1636.53,
+    "total": 9819.19
+  },
+  "inv_023": {
+    "invoice_number": "INV-2025-6705",
+    "vendor": "Falcon Freight Systems",
+    "date": "2025-10-23",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 5,
+        "unit_price": 1814.65,
+        "amount": 9073.25
+      },
+      {
+        "description": "Monthly cloud hosting, region EU-1",
+        "quantity": 1,
+        "unit_price": 2265.63,
+        "amount": 2265.63
+      },
+      {
+        "description": "Server rack rental, per month",
+        "quantity": 12,
+        "unit_price": 2187.47,
+        "amount": 26249.64
+      },
+      {
+        "description": "Annual SaaS license, Pro tier",
+        "quantity": 12,
+        "unit_price": 369.65,
+        "amount": 4435.8
+      },
+      {
+        "description": "Pallet freight, zone 3",
+        "quantity": 5,
+        "unit_price": 1282.1,
+        "amount": 6410.5
+      },
+      {
+        "description": "Ergonomic task chair",
+        "quantity": 4,
+        "unit_price": 504.94,
+        "amount": 2019.76
+      }
+    ],
+    "subtotal": 50454.58,
+    "tax": 4036.37,
+    "total": 54490.95
+  },
+  "inv_024": {
+    "invoice_number": "INV-2025-3757",
+    "vendor": "Orion Data Networks",
+    "date": "2025-11-15",
+    "currency": "EUR",
+    "line_items": [
+      {
+        "description": "Extension lead, 8-way surge protected",
+        "quantity": 6,
+        "unit_price": 1924.97,
+        "amount": 11549.82
+      },
+      {
+        "description": "Consulting hours, backend integration",
+        "quantity": 2,
+        "unit_price": 1654.69,
+        "amount": 3309.38
+      },
+      {
+        "description": "Hydraulic hose assembly, 2m",
+        "quantity": 2,
+        "unit_price": 2277.89,
+        "amount": 4555.78
+      },
+      {
+        "description": "Cat6 patch cable, 10m",
+        "quantity": 11,
+        "unit_price": 827.69,
+        "amount": 9104.59
+      },
+      {
+        "description": "USB-C docking station",
+        "quantity": 8,
+        "unit_price": 149.29,
+        "amount": 1194.32
+      }
+    ],
+    "subtotal": 29713.89,
+    "tax": 5645.64,
+    "total": 35359.53
+  }
+}

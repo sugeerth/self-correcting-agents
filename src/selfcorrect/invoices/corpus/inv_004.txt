@@ -1,0 +1,27 @@
+From: accounts@copperfieldstation.example.com
+To: ap@yourcompany.example.com
+Subject: FW: Invoice INV/838/2025 -- payment requested
+
+---------- Forwarded message ----------
+> Hello,
+> Please find below the invoice details from Copperfield Stationers.
+>
+> Invoice no: INV/838/2025
+> Date: 2.2.2025
+> All amounts in EUR.
+>
+> 6 x Industrial shelving unit, 5-tier @ 2335.03 EUR = 14010.18 EUR
+> 12 x Safety goggles, anti-fog, 10-pack @ 1199.85 EUR = 14398.20 EUR
+> 11 x Cat6 patch cable, 10m @ 63.66 EUR = 700.26 EUR
+> 2 x Server rack rental, per month @ 1164.69 EUR = 2329.38 EUR
+>
+> Suggested deposit for next order: 4841.33 EUR
+> Estimated annual spend: 5881.83 EUR
+> Subtotal: 31438.02 EUR
+> Tax @ 20%: 6287.60 EUR
+> Balance due: 37725.62 EUR
+>
+> This invoice was generated electronically and is valid without a signature.
+>
+> Kind regards,
+> Accounts Receivable

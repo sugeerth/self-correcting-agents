@@ -1,0 +1,16 @@
+Invoice  Number: INV-2025-8710
+Vendor: Foxglove Botanical Wholesale
+Address: 4821 Mercantile Row, Suite 210, Columbus,  OH 43215
+Date:  26.1.2025
+
+Item 1: Window cleaning, ground floor -- qty  7 @ $2001.40 USD each, line total $14009.80 USD
+Item 2: On-site training session, half day -- qty 11 @ $1374.97 USD each, line total $15124.67 USD
+Item 3: First aid kit refill, workplace -- qty 10 @ $2141.25 USD each, line total $21412.50 USD
+Item 4: Ergonomic task chair -- qty 11 @ $1658.09 USD each, line total $18238.99 USD
+Item 5: Document translation, per 1000 words -- qty 3 @ $730.40 USD  each, line total $2191.20 USD
+Item 6: Cat6 patch cable, 10m -- qty 8 @ $1826.11 USD each, line total $14608.88 USD
+
+Previous balance:  $1740.10 USD
+SUBTOTAL: $85586.04  USD
+Tax (19%): $16261.35 USD
+Total due: $101847.39 USD

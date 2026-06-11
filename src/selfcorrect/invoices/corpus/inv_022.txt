@@ -1,0 +1,17 @@
+Invoice Number: 2025-62547
+Vendor: Riverbend Print & Mail
+Address: 1170 Sandpiper Ave, Unit 4, Tampa, FL 33607
+Date: 7.7.2025
+Currency: EUR
+
+Item 1: Espresso beans, 1kg, dark roast -- qty 8 @ 2.37 each, line total 18.96
+Item 2: Document translation, per 1000 words -- qty 12 @ 604.70 each, line total 7256.40
+Item 3: Nitrile gloves, box of 100 -- qty 1 @ 907.30 each, line total 907.30
+
+Suggested deposit for next order: 1780.34
+Amount before discount: 11292.07
+Sub-total: 8182.66
+Tax (20%): 1636.53
+Amount due: 9819.19
+
+Goods remain the property of the seller until paid in full. E&OE.

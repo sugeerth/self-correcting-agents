@@ -1,0 +1,27 @@
+From: accounts@tidewatermarinepar.example.com
+To: ap@yourcompany.example.com
+Subject: FW: Invoice 2025-15627 -- payment requested
+
+---------- Forwarded message ----------
+> Hello,
+> Please find below the invoice details from Tidewater Marine Parts.
+>
+> Invoice no: 2025-15627
+> Date: 25.3.2025
+> Your PO: PO-44694
+>
+> 10 x Toner cartridge, black, high yield @ £1850.29 GBP = £18502.90 GBP
+> 6 x Soil sample analysis, standard panel @ £1369.76 GBP = £8218.56 GBP
+> 2 x Whiteboard, magnetic, 120x90cm @ £920.85 GBP = £1841.70 GBP
+> 8 x Nitrile gloves, box of 100 @ £200.74 GBP = £1605.92 GBP
+> 1 x Ergonomic task chair @ £863.74 GBP = £863.74 GBP
+> 7 x Logo redesign, two revision rounds @ £2416.05 GBP = £16912.35 GBP
+>
+> Suggested deposit for next order: £6598.73 GBP
+> Estimated annual spend: £1609.48 GBP
+> Subtotal: £47945.17 GBP
+> Tax @ 20%: £9589.03 GBP
+> TOTAL: £57534.20 GBP
+>
+> Kind regards,
+> Accounts Receivable

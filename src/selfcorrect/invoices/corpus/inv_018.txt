@@ -1,0 +1,16 @@
+Invoice Number: INV-2025-2809
+Vendor: Lumen Creative Studio
+Address: 300 Granary Lane, Floor 2,  Madison, WI 53703
+Date:  08/17/2025
+
+Item 1: Extension lead, 8-way surge protected -- qty 10 @ €2,413.11 each, line total €24,131.10
+Item 2: Ergonomic task chair -- qty 6 @ €299.01 each, line total €1,794.06
+Item 3: A4 copy paper, 500 sheets -- qty 5 @ €186.63 each, line total €933.15
+Item 4: First aid kit refill, workplace -- qty 3 @ €1,561.03 each, line total €4,683.09
+Item 5: Annual SaaS license, Pro tier -- qty 2 @ €1,115.54 each, line total €2,231.08
+
+Amount before discount:  €38,297.99
+Estimated annual  spend: €2,683.16
+Subtotal: €33,772.48
+Tax (8%): €2,701.80
+TOTAL:  €36,474.28

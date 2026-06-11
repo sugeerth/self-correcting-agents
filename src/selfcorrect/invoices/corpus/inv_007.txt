@@ -1,0 +1,25 @@
+From: accounts@summitridgetrainin.example.com
+To: ap@yourcompany.example.com
+Subject: FW: Invoice 2025-52316 -- payment requested
+
+---------- Forwarded message ----------
+> Hello,
+> Please find below the invoice details from Summit Ridge Training Partners.
+>
+> Invoice no: 2025-52316
+> Date: May 28, 2025
+>
+> 11 x Window cleaning, ground floor @ $2174.83 USD = $23923.13 USD
+> 6 x Hydraulic hose assembly, 2m @ $560.12 USD = $3360.72 USD
+> 1 x Pallet freight, zone 3 @ $545.52 USD = $545.52 USD
+> 11 x Extension lead, 8-way surge protected @ $1295.62 USD = $14251.82 USD
+>
+> Amount before discount: $50339.62 USD
+> Sub-total: $42081.19 USD
+> Tax @ 8.75%: $3682.10 USD
+> TOTAL DUE: $45763.29 USD
+>
+> Please remit payment to the account on file. Thank you for your business.
+>
+> Kind regards,
+> Accounts Receivable

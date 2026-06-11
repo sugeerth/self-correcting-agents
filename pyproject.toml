@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "selfcorrect"
+version = "0.1.0"
+description = "Self-correcting agents: a generate -> validate -> critique -> repair loop, benchmarked on invoice extraction."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [{ name = "Sugeerth Murugesan" }]
+dependencies = []
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.40", "pydantic>=2.0"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.4"]
+
+[project.scripts]
+selfcorrect = "selfcorrect.cli:main"
+
+[project.urls]
+Homepage = "https://sugeerth.github.io/self-correcting-agents/"
+Repository = "https://github.com/sugeerth/self-correcting-agents"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/selfcorrect"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

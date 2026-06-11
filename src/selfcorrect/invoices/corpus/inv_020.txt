@@ -1,0 +1,24 @@
+From: accounts@cascadeofficesuppl.example.com
+To: ap@yourcompany.example.com
+Subject: FW: Invoice 2025-18902 -- payment requested
+
+---------- Forwarded message ----------
+> Hello,
+> Please find below the invoice details from Cascade Office Supply Co..
+>
+> Invoice no: 2025-18902
+> Date: 19.12.2025
+> Your PO: PO-96806
+>
+> 10 x Hydraulic hose assembly, 2m @ $2168.90 = $21689.00
+> 6 x USB-C docking station @ $40.65 = $243.90
+> 4 x Consulting hours, backend integration @ $703.36 = $2813.44
+>
+> Previous balance: $3455.73
+> Credit available on account: $5677.13
+> SUBTOTAL: $24746.34
+> Tax @ 8.75%: $2165.30
+> Balance due: $26911.64
+>
+> Kind regards,
+> Accounts Receivable

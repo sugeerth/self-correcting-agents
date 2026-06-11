@@ -1,0 +1,19 @@
+INVOICE                                             INV/872/2025
+Apex Electrical Wholesale
+Unit 12, Riverside Trade Park, Leeds LS10 1AB
+
+Invoice date: 2025-06-07
+
+ QTY  DESCRIPTION                                   UNIT PRICE        AMOUNT
+   8  CCTV camera, outdoor dome                        $158.72     $1,269.76
+   9  Annual SaaS license, Pro tier                  $1,988.51    $17,896.59
+   6  First aid kit refill, workplace                   $49.21       $295.26
+   4  Whiteboard, magnetic, 120x90cm                 $2,094.16     $8,376.64
+   3  Pallet freight, zone 3                         $2,422.76     $7,268.28
+   1  Toner cartridge, black, high yield             $1,094.29     $1,094.29
+
+                                      Amount before discount    $45,273.65
+                                            Previous balance       $927.74
+                                                    SUBTOTAL    $36,200.82
+                                                 TAX (8.75%)     $3,167.57
+                                                   Total due    $39,368.39

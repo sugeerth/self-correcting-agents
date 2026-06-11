@@ -1,0 +1,19 @@
+INVOICE                                             INV-2025-3757
+Orion Data Networks
+55 Quayside Street, Galway H91 X2F4
+
+Invoice date: 2025-11-15        PO Number: PO-54154
+Currency: EUR
+
+ QTY  DESCRIPTION                                   UNIT PRICE        AMOUNT
+   6  Extension lead, 8-way surge protected            1924.97      11549.82
+   2  Consulting hours, backend integration            1654.69       3309.38
+   2  Hydraulic hose assembly, 2m                      2277.89       4555.78
+  11  Cat6 patch cable, 10m                             827.69       9104.59
+   8  USB-C docking station                             149.29       1194.32
+
+                                      Amount before discount      38188.29
+                            Suggested deposit for next order       8566.17
+                                                   Sub-total      29713.89
+                                                   TAX (19%)       5645.64
+                                                 Balance due      35359.53

@@ -1,0 +1,24 @@
+  Northwind Logistics GmbH
+  ------------------------------
+  INV-2025-3099
+  2025-08-11
+  ------------------------------
+  Document translation, per 1000 words
+    10 @ $215.25   $2152.50
+  A4 copy paper, 500 sheets
+    12 @ $20.78   $249.36
+  Catered lunch, per head
+    2 @ $113.58   $227.16
+  CCTV camera, outdoor dome
+    10 @ $573.61   $5736.10
+  ------------------------------
+  Credit available on account
+      $5641.38
+  Shipping & handling (billed separately)
+      $24.75
+  Previous balance
+      $8416.87
+  Sub-total    $8365.12
+  Tax 19%    $1589.37
+  Balance due    $9954.49
+  ------------------------------

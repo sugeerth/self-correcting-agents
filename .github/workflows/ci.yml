@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --dev
+      - run: uv run ruff check src tests examples
+      - run: uv run pytest -q
+
+  benchmark:
+    runs-on: ubuntu-latest
+    needs: lint-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --dev
+      # Deterministic simulated engine only — no API keys, no model downloads.
+      - run: uv run python -m selfcorrect bench --ablation --out bench_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: bench_out/

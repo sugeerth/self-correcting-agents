@@ -1,0 +1,17 @@
+Invoice Number: 2025-46577
+Vendor: Granite Peak Consulting LLC
+Address: Unit 12, Riverside Trade Park, Leeds LS10 1AB
+Date: November 9, 2025
+Currency: GBP
+
+Item 1: Extension lead, 8-way surge protected -- qty 8 @ 2437.82 GBP each, line total 19502.56 GBP
+Item 2: Soil sample analysis, standard panel -- qty 10 @ 1309.94 GBP each, line total 13099.40 GBP
+Item 3: Ergonomic task chair -- qty 11 @ 1239.89 GBP each, line total 13638.79 GBP
+
+Amount before discount: 52072.86 GBP
+Shipping & handling (billed separately): 44.18 GBP
+SUBTOTAL: 46240.75 GBP
+Tax (7.25%): 3352.45 GBP
+TOTAL: 49593.20 GBP
+
+This invoice was generated electronically and is valid without a signature.

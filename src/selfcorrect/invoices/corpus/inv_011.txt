@@ -1,0 +1,17 @@
+INVOICE                                             2025-28527
+Bluegrass Catering Group
+300 Granary Lane, Floor 2, Madison, WI 53703
+
+Invoice date: 11.1.2025
+Currency: GBP
+
+ QTY  DESCRIPTION                                   UNIT PRICE        AMOUNT
+  10  First aid kit refill, workplace                    27.67        276.70
+   8  Safety goggles, anti-fog, 10-pack               1,376.29     11,010.32
+   6  Soil sample analysis, standard panel            1,056.81      6,340.86
+
+                                      Amount before discount     19,990.01
+                                 Credit available on account      8,225.53
+                                                    SUBTOTAL     17,627.88
+                                                    TAX (5%)        881.39
+                                                   TOTAL DUE     18,509.27

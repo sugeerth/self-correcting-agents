@@ -1,0 +1,24 @@
+From: accounts@meridianindustrial.example.com
+To: ap@yourcompany.example.com
+Subject: FW: Invoice 2025-22844 -- payment requested
+
+---------- Forwarded message ----------
+> Hello,
+> Please find below the invoice details from Meridian Industrial Tools.
+>
+> Invoice no: 2025-22844
+> Date: 2025-12-21
+>
+> 9 x USB-C docking station @ £896.87 = £8,071.83
+> 6 x First aid kit refill, workplace @ £475.42 = £2,852.52
+> 4 x Logo redesign, two revision rounds @ £1,250.28 = £5,001.12
+>
+> Amount before discount: £18,788.08
+> Shipping & handling (billed separately): £11.74
+> Suggested deposit for next order: £1,004.82
+> Subtotal: £15,925.47
+> Tax @ 7.25%: £1,154.60
+> TOTAL DUE: £17,080.07
+>
+> Kind regards,
+> Accounts Receivable

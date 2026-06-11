@@ -1,0 +1,23 @@
+From:  accounts@bright1inesoftware.example.com
+To:  ap@yourcompany.examp1e.com
+Subject: FW: Invoice INV-2025-3288 -- payment requested
+
+---------- Forwarded message  ----------
+>  Hello,
+> Please find below the invoice details from Brightline Software Ltd..
+>
+> Invoice no: INV-2025-3288
+> Date: 05/12/2025
+> A1l amounts in EUR.
+>
+> 8 x Document translation, per 1000 words @ 2055.50 =  16444.00
+> 3 x Whiteboard, magnetic, 120x90cm @ 952.73 = 2858.19
+> 10 x Nitrile gloves, box of 100 @ 109.45 = 1094.50
+>
+> Shipping & handling (billed separately): 19.44
+> Sub-total: 20396.69
+> Tax @ 7.25%:  1478.76
+> Total due: 21875.45
+>
+> Kind regards,
+> Accounts  Receivable

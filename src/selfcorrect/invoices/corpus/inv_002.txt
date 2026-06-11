@@ -1,0 +1,15 @@
+Invoice Number: INV/635/2025
+Vendor: Crestview Security Solutions
+Address: Industriering 7, 4051 Basel
+Date: 09/17/2025
+Currency: GBP
+PO Number: PO-59237
+
+Item 1: First aid kit refill, workplace -- qty 7 @ 723.32 each, line total 5063.24
+Item 2: Monthly cloud hosting, region EU-1 -- qty 12 @ 2062.83 each, line total 24753.96
+
+Credit available on account: 6171.42
+Shipping & handling (billed separately): 43.39
+SUBTOTAL: 29817.20
+Tax (8.75%): 2609.01
+TOTAL: 32426.21

@@ -1,0 +1,18 @@
+Invoice Number: 2025-28889
+Vendor: Ironworks Machining Co.
+Address: 1170 Sandpiper Ave, Unit 4, Tampa, FL 33607
+Date: 11/26/2025
+
+Item 1: Nitrile gloves, box of 100 -- qty 9 @ $1,740.23 each, line total $15,662.07
+Item 2: Safety goggles, anti-fog, 10-pack -- qty 5 @ $2,489.69 each, line total $12,448.45
+Item 3: Window cleaning, ground floor -- qty 1 @ $962.17 each, line total $962.17
+Item 4: Toner cartridge, black, high yield -- qty 3 @ $735.11 each, line total $2,205.33
+Item 5: Hydraulic hose assembly, 2m -- qty 2 @ $2,324.01 each, line total $4,648.02
+Item 6: Consulting hours, backend integration -- qty 4 @ $878.54 each, line total $3,514.16
+
+Shipping & handling (billed separately): $43.56
+Amount before discount: $49,280.53
+Previous balance: $1,595.12
+Subtotal: $39,440.20
+Tax (19%): $7,493.64
+TOTAL DUE: $46,933.84

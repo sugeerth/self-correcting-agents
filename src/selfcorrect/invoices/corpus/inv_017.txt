@@ -1,0 +1,17 @@
+INVOICE                                             2025-94716
+Atlas Geo Survey Services
+55 Quayside Street, Galway H91 X2F4
+
+Invoice  date: 06/24/2025
+
+ QTY   DESCRIPTION                                   UNIT PRICE        AMOUNT
+   1  USB-C docking station                       €2059.10 EUR  €2059.10 EUR
+   3  Industrial shelving unit, 5-tier             €560.62 EUR  €1681.86 EUR
+   9  Cat6 patch cable, 10m                       €1541.13 EUR €13870.17 EUR
+  11  Monthly cloud hosting, region EU-1           €605.00 EUR  €6655.00 EUR
+  12  Server rack rental, per month                €574.73 EUR  €6896.76 EUR
+
+                                      Estimated annual spend  €1420.31  EUR
+                                                    Subtotal  €31162.89 EUR
+                                                   TAX (19%)  €5920.95 EUR
+                                                   Total due €37083.84 EUR

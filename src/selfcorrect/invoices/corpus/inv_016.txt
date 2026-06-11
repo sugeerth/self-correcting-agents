@@ -1,0 +1,20 @@
+INVOICE                                             2025-23648
+Juniper Lab Supplies
+300 Granary Lane, Floor 2, Madison, WI 53703
+
+Invoice date: 2025-09-19
+Currency: USD
+
+ QTY  DESCRIPTION                                   UNIT PRICE        AMOUNT
+   4  Server rack rental, per month                     782.56       3130.24
+   8  Standing desk, oak finish                         856.00       6848.00
+  10  Annual SaaS license, Pro tier                      68.91        689.10
+   3  Wireless presenter remote                          73.40        220.20
+   9  Hydraulic hose assembly, 2m                        18.78        169.02
+
+                                 Credit available on account       1493.36
+                                                   Sub-total      11056.56
+                                                   TAX (20%)       2211.31
+                                                   TOTAL DUE      13267.87
+
+Please remit payment to the account on file. Thank you for your business.

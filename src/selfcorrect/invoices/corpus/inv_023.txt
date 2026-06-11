@@ -1,0 +1,20 @@
+INVOICE                                              INV-2025-6705
+Falcon Freight Systems
+Werkstrasse  18, 70565 Stuttgart
+
+Invoice date: 2025-10-23
+Currency: USD
+
+ QTY   DESCRIPTION                                   UNIT PRICE        AMOUNT
+   5  Hydraulic hose assembly, 2m                     1,814.65      9,073.25
+   1  Monthly cloud hosting, region  EU-1              2,265.63      2,265.63
+  12  Server rack rental, per month                   2,187.47     26,249.64
+  12  Annual SaaS  license, Pro tier                     369.65      4,435.80
+   5  Pallet freight, zone 3                          1,282.10       6,410.50
+   4  Ergonomic task chair                              504.94      2,019.76
+
+                                 Credit available on account      2,596.42
+                                            Previous  balance      6,218.12
+                                                   Sub-total      50,454.58
+                                                    TAX (8%)      4,036.37
+                                                  Amount due     54,490.95

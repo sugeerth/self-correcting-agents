@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from selfcorrect.types import Critic, Task, Validator
+from selfcorrect.domains import Domain
+from selfcorrect.types import Critic, Engine, Task, Validator
 
 
 def build_validator() -> Validator:
@@ -36,3 +37,33 @@ def load_ground_truth() -> dict[str, dict[str, Any]]:
     from selfcorrect.invoices.loader import load_ground_truth as _load
 
     return _load()
+
+
+def build_simulated_engine(seed: int = 42) -> Engine:
+    """The seeded fault-injection engine over the invoice ground truth."""
+    from selfcorrect.invoices.errors import build_simulated_engine as _build
+
+    return _build(load_ground_truth(), seed=seed)
+
+
+def _domain() -> Domain:
+    from selfcorrect.invoices.scoring import FIELD_NAMES, describe_row, field_accuracy
+
+    return Domain(
+        name="invoices",
+        title="invoice extraction",
+        unit="invoices",
+        default_demo_task="inv_004",
+        load_tasks=load_tasks,
+        load_ground_truth=load_ground_truth,
+        build_validator=build_validator,
+        build_critic=build_critic,
+        build_simulated_engine=build_simulated_engine,
+        field_names=FIELD_NAMES,
+        field_accuracy=field_accuracy,
+        describe_row=describe_row,
+    )
+
+
+#: This plug-in, packaged for the registry (selfcorrect.domains.get_domain).
+DOMAIN = _domain()

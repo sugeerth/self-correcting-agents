@@ -9,6 +9,8 @@ loop with zero runtime dependencies, demonstrated on structured invoice extracti
 
 📖 **Blog post:** [Self-Correcting Agents: Teaching an Agent to Catch and Fix Its Own Mistakes](https://sugeerth.github.io/self-correcting-agents/) ([markdown](docs/index.md))
 
+▶ **[Interactive demo](https://sugeerth.github.io/self-correcting-agents/demo.html)** — watch real recorded runs catch violations and repair themselves, across all three domains (replayed, not re-simulated).
+
 ```
  input ───────► [ GENERATE ] ───► candidate ───► [ VALIDATE ] ──ok──► output
                      ▲                                 │ fail
@@ -120,6 +122,41 @@ benchmark: the generic critic exactly matches OFF — the lift is targeted feedb
 not retries. (The one ON failure is a two-error task whose deterministic repair
 roll misses — bounded failure, reported loudly.) Full tables: `bench_out_sqlq/`.
 
+### And a third: computer-use agents
+
+`selfcorrect/cua/` extends the same loop to **computer-use**: the agent must drive a
+simulated booking UI (a declarative page/element state machine — search, results,
+checkout) to a goal state. The validator *executes* the proposed action sequence and
+turns what real CUA agents get wrong into structured violations: unknown targets,
+actions on the wrong element type, precondition failures (paying before filling
+required fields), stalled flows, and wrong final bookings.
+
+```bash
+uv run python -m selfcorrect demo  --domain cua           # watch an agent fix its own actions
+uv run python -m selfcorrect bench --domain cua --ablation --out bench_out_cua
+```
+
+10 booking flows, seed 42, max 3 attempts — simulated engine, same disclaimer:
+
+| configuration | fully valid | mean attempts |
+|---|---:|---:|
+| self-correction OFF | 50.0% | 1.00 |
+| self-correction ON (targeted critic) | **90.0%** | 1.60 |
+| ablation: generic "please fix it" critic | 50.0% | 2.00 |
+
+Three domains, one loop, one finding: **the generic critic exactly matches OFF in all
+three** — self-correction is worth nothing without targeted, structured feedback.
+
+## Use it as a Claude Code skill
+
+The loop's protocol is packaged as a portable skill in [`skills/self-correct/`](skills/self-correct/):
+derive executable validators *first*, generate, validate by **running** the checks, feed back
+targeted per-violation repair instructions, retry bounded, fail loudly with the best attempt.
+
+```bash
+cp -r skills/self-correct ~/.claude/skills/    # then: /self-correct in Claude Code
+```
+
 ## Engines
 
 | engine | cost | needs | use |
@@ -164,16 +201,19 @@ src/selfcorrect/        the framework (zero runtime dependencies)
   engines/              simulated | hermes (Ollama) | anthropic (optional extra)
   invoices/             flagship domain plug-in: schema, rules, templates, corpus, catalog
   sqlq/                 second domain plug-in: text-to-SQL over a fixture sqlite DB
-tests/                  92 tests: unit, determinism, e2e lift bounds, import-boundary
+  cua/                  third domain plug-in: computer use over a simulated booking UI
+skills/self-correct/    the loop as an installable Claude Code skill
+tools/                  export_demo_traces.py -> docs/demo_data.js (real recorded runs)
+tests/                  107 tests: unit, determinism, e2e lift bounds, import-boundary
 examples/run_demo.py    scripted walkthrough
-docs/                   the blog post (GitHub Pages)
+docs/                   the blog post + interactive demo (GitHub Pages)
 ```
 
 ## Development
 
 ```bash
 uv sync --dev
-uv run pytest -q          # 92 tests, no network
+uv run pytest -q          # 107 tests, no network
 uv run ruff check src tests examples
 ```
 

@@ -4,7 +4,7 @@ title: "Self-Correcting Agents: Teaching an Agent to Catch and Fix Its Own Mista
 description: "A generate → validate → critique → repair loop, benchmarked on invoice extraction — runs entirely free, no API keys."
 ---
 
-*June 2026 · [source code on GitHub](https://github.com/sugeerth/self-correcting-agents) · everything below runs locally for $0.00*
+*June 2026 · [source code on GitHub](https://github.com/sugeerth/self-correcting-agents) · **[▶ interactive demo — watch real runs repair themselves](./demo.html)** · everything below runs locally for $0.00*
 
 ## The problem: LLM outputs fail silently
 

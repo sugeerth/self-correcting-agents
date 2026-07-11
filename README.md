@@ -93,6 +93,33 @@ The core (`types`, `loop`, `validators`, `critic`, `engines/simulated`) is **dom
 everything invoice-specific lives in `selfcorrect/invoices/` as a plug-in (schema, business
 rules, feedback templates, error catalog, corpus). Tests enforce the boundary.
 
+## Proof it generalizes: a second domain
+
+"The core is domain-agnostic" is only a claim until a second domain runs through it
+untouched. `selfcorrect/sqlq/` is **text-to-SQL** over a fixture sqlite database
+(stdlib only): the validator executes the candidate query and checks it against
+per-task acceptance criteria — expected columns, row count, and a result checksum —
+derived once from the gold queries, so in-loop validation verifies without ever
+seeing the answer.
+
+```bash
+uv run python -m selfcorrect demo  --domain sqlq          # watch a query get repaired
+uv run python -m selfcorrect bench --domain sqlq --ablation --out bench_out_sqlq
+```
+
+12 queries, seed 42, max 3 attempts — simulated engine, same disclaimer as above:
+
+| configuration | fully valid | mean attempts |
+|---|---:|---:|
+| self-correction OFF | 25.0% | 1.00 |
+| self-correction ON (targeted critic) | **91.7%** | 1.92 |
+| ablation: generic "please fix it" critic | 25.0% | 2.50 |
+
+Same shape as the invoice result, new domain, zero changes to the loop, CLI, or
+benchmark: the generic critic exactly matches OFF — the lift is targeted feedback,
+not retries. (The one ON failure is a two-error task whose deterministic repair
+roll misses — bounded failure, reported loudly.) Full tables: `bench_out_sqlq/`.
+
 ## Engines
 
 | engine | cost | needs | use |
@@ -135,8 +162,9 @@ result = agent.run(load_tasks()[3])
 ```
 src/selfcorrect/        the framework (zero runtime dependencies)
   engines/              simulated | hermes (Ollama) | anthropic (optional extra)
-  invoices/             the domain plug-in: schema, rules, templates, corpus, error catalog
-tests/                  77 tests: unit, determinism, e2e lift bounds, import-boundary
+  invoices/             flagship domain plug-in: schema, rules, templates, corpus, catalog
+  sqlq/                 second domain plug-in: text-to-SQL over a fixture sqlite DB
+tests/                  92 tests: unit, determinism, e2e lift bounds, import-boundary
 examples/run_demo.py    scripted walkthrough
 docs/                   the blog post (GitHub Pages)
 ```
@@ -145,7 +173,7 @@ docs/                   the blog post (GitHub Pages)
 
 ```bash
 uv sync --dev
-uv run pytest -q          # 77 tests, no network
+uv run pytest -q          # 92 tests, no network
 uv run ruff check src tests examples
 ```
 

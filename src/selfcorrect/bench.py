@@ -1,41 +1,30 @@
 """Benchmark: self-correction OFF vs ON (vs a generic-critic ablation).
 
-Runs the full invoice corpus through the loop under each configuration and
-reports validity, field accuracy against ground truth, attempt histograms,
-latency, and cost. Artifacts (results.json, results.md, attempts.svg,
-traces.jsonl) land in ``BenchConfig.out_dir``. Everything is a pure function
-of the config, so identical configs produce identical payloads and traces.
+Runs the selected domain's full corpus through the loop under each
+configuration and reports validity, field accuracy against ground truth,
+attempt histograms, latency, and cost. Artifacts (results.json, results.md,
+attempts.svg, traces.jsonl) land in ``BenchConfig.out_dir``. Everything is a
+pure function of the config, so identical configs produce identical payloads
+and traces. What "field accuracy" means is domain knowledge and comes from
+the ``Domain`` plug-in (see selfcorrect.domains).
 """
 
 from __future__ import annotations
 
 import json
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
-from decimal import Decimal
 from pathlib import Path
 from typing import Any, TextIO
 
 from selfcorrect.critic import GenericCritic
+from selfcorrect.domains import Domain, get_domain
 from selfcorrect.engines import get_engine
-from selfcorrect.invoices import build_critic, build_validator, load_ground_truth, load_tasks
 from selfcorrect.loop import SelfCorrectingAgent
 from selfcorrect.trace import TraceWriter
 from selfcorrect.types import Critic, Engine, RunResult, Task, Validator
-from selfcorrect.validators import as_decimal
 
-_MONEY_TOLERANCE = Decimal("0.01")
-_MONEY_FIELDS = ("subtotal", "tax", "total")
-_FIELD_NAMES = (
-    "vendor",
-    "date",
-    "currency",
-    "subtotal",
-    "tax",
-    "total",
-    "line_item_count",
-    "line_item_fields",
-)
 _SVG_COLORS = ("#4c78a8", "#f58518", "#54a24b")
 
 
@@ -48,65 +37,7 @@ class BenchConfig:
     ablation: bool = False
     out_dir: Path = Path("bench_out")
     engine: str = "simulated"
-
-
-# ---------------------------------------------------------------- accuracy
-
-
-def _text_match(expected: Any, actual: Any) -> bool:
-    """Case- and whitespace-insensitive string equality."""
-    if not (isinstance(expected, str) and isinstance(actual, str)):
-        return False
-    return expected.strip().casefold() == actual.strip().casefold()
-
-
-def _money_match(expected: Any, actual: Any) -> bool:
-    """Decimal equality within one cent; non-numbers never match."""
-    e, a = as_decimal(expected), as_decimal(actual)
-    return e is not None and a is not None and abs(e - a) <= _MONEY_TOLERANCE
-
-
-def _exact_number_match(expected: Any, actual: Any) -> bool:
-    e, a = as_decimal(expected), as_decimal(actual)
-    return e is not None and a is not None and e == a
-
-
-def _line_item_cells(out_items: list[Any], gt_items: list[dict[str, Any]]) -> float:
-    """Fraction of per-cell matches, compared positionally against ground truth."""
-    cells = 4 * len(gt_items)
-    if cells == 0:  # cannot happen with this corpus, but stay safe
-        return 1.0
-    correct = 0
-    for i, gt_item in enumerate(gt_items):
-        candidate = out_items[i] if i < len(out_items) else None
-        out_item: dict[str, Any] = candidate if isinstance(candidate, dict) else {}
-        if _text_match(gt_item["description"], out_item.get("description")):
-            correct += 1
-        if _exact_number_match(gt_item["quantity"], out_item.get("quantity")):
-            correct += 1
-        for key in ("unit_price", "amount"):
-            if _money_match(gt_item[key], out_item.get(key)):
-                correct += 1
-    return correct / cells
-
-
-def _field_accuracy(output: dict[str, Any] | None, truth: dict[str, Any]) -> dict[str, float]:
-    """Per-field accuracy of one final output against its ground truth."""
-    if not isinstance(output, dict):
-        return {name: 0.0 for name in _FIELD_NAMES}
-    raw_items = output.get("line_items")
-    out_items: list[Any] = raw_items if isinstance(raw_items, list) else []
-    gt_items: list[dict[str, Any]] = truth["line_items"]
-    scores = {
-        "vendor": float(_text_match(truth["vendor"], output.get("vendor"))),
-        "date": float(output.get("date") == truth["date"]),
-        "currency": float(output.get("currency") == truth["currency"]),
-        "line_item_count": float(len(out_items) == len(gt_items)),
-        "line_item_fields": _line_item_cells(out_items, gt_items),
-    }
-    for key in _MONEY_FIELDS:
-        scores[key] = float(_money_match(truth[key], output.get(key)))
-    return {name: scores[name] for name in _FIELD_NAMES}
+    domain: str = "invoices"
 
 
 # ---------------------------------------------------------------- one config
@@ -119,11 +50,13 @@ def _histogram(results: list[RunResult], buckets: list[str]) -> dict[str, int]:
     return counts
 
 
-def _aggregate_accuracy(rows: list[dict[str, Any]]) -> dict[str, float]:
+def _aggregate_accuracy(
+    rows: list[dict[str, Any]], field_names: tuple[str, ...]
+) -> dict[str, float]:
     per_field = {
-        name: sum(row["field_accuracy"][name] for row in rows) / len(rows) for name in _FIELD_NAMES
+        name: sum(row["field_accuracy"][name] for row in rows) / len(rows) for name in field_names
     }
-    per_field["macro_avg"] = sum(per_field[name] for name in _FIELD_NAMES) / len(_FIELD_NAMES)
+    per_field["macro_avg"] = sum(per_field[name] for name in field_names) / len(field_names)
     return per_field
 
 
@@ -134,6 +67,8 @@ def _run_configuration(
     critic: Critic,
     tasks: list[Task],
     ground_truth: dict[str, dict[str, Any]],
+    field_names: tuple[str, ...],
+    field_accuracy: Callable[[dict[str, Any] | None, dict[str, Any]], dict[str, float]],
     max_attempts: int,
     buckets: list[str],
     traces: TraceWriter,
@@ -151,7 +86,7 @@ def _run_configuration(
                 "task_id": task.id,
                 "success": result.success,
                 "num_attempts": result.num_attempts,
-                "field_accuracy": _field_accuracy(result.final_output, ground_truth[task.id]),
+                "field_accuracy": field_accuracy(result.final_output, ground_truth[task.id]),
                 "latency_s": result.total_latency_s,
                 "cost_usd": result.total_cost_usd,
             }
@@ -159,7 +94,7 @@ def _run_configuration(
     n = len(results)
     metrics = {
         "fully_valid_rate": sum(r.success for r in results) / n,
-        "field_accuracy": _aggregate_accuracy(rows),
+        "field_accuracy": _aggregate_accuracy(rows, field_names),
         "attempts_histogram": _histogram(results, buckets),
         "mean_attempts": sum(r.num_attempts for r in results) / n,
         "total_latency_s": sum(r.total_latency_s for r in results),
@@ -182,11 +117,12 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         disclaimer = f"**All numbers below come from live `{engine}` runs.**"
     configs = payload["configurations"]
     lines = [
-        "# Self-correction benchmark — invoice extraction",
+        f"# Self-correction benchmark — {payload['domain_title']}",
         "",
         disclaimer,
         "",
-        f"Corpus: {payload['num_tasks']} invoices · seed {payload['config']['seed']} · "
+        f"Corpus: {payload['num_tasks']} {payload['domain_unit']} · "
+        f"seed {payload['config']['seed']} · "
         f"max attempts {payload['config']['max_attempts']}",
         "",
         "## Summary",
@@ -203,7 +139,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
     lines += ["", "## Field accuracy vs ground truth", ""]
     header = "| field | " + " | ".join(cfg["name"] for cfg in configs) + " |"
     lines += [header, "|---|" + "---:|" * len(configs)]
-    for field_name in (*_FIELD_NAMES, "macro_avg"):
+    for field_name in (*payload["field_names"], "macro_avg"):
         cells = " | ".join(f"{cfg['metrics']['field_accuracy'][field_name]:.1%}" for cfg in configs)
         lines.append(f"| {field_name} | {cells} |")
     lines += ["", "## Attempts to converge", ""]
@@ -271,7 +207,11 @@ def _print_summary(payload: dict[str, Any], file: TextIO) -> None:
     configs = payload["configurations"]
     engine = payload["engine_name"]
     kind = "deterministic fault-injection simulation" if payload["simulated"] else "live engine"
-    print(f"Benchmark over {payload['num_tasks']} invoices — engine: {engine} ({kind})", file=file)
+    print(
+        f"Benchmark over {payload['num_tasks']} {payload['domain_unit']} — "
+        f"engine: {engine} ({kind})",
+        file=file,
+    )
     print(file=file)
     name_w = max(len(cfg["name"]) for cfg in configs)
     header = f"{'configuration':<{name_w}}  {'valid':>7}  {'mean att':>8}  valid-rate"
@@ -300,11 +240,15 @@ def _print_summary(payload: dict[str, Any], file: TextIO) -> None:
 
 def run_benchmark(cfg: BenchConfig, file: TextIO = sys.stdout) -> dict[str, Any]:
     """Run OFF/ON (and the ablation) over the corpus; write artifacts; return payload."""
-    engine = get_engine(cfg.engine, seed=cfg.seed)
-    validator = build_validator()
-    critic = build_critic()
-    tasks = load_tasks()
-    ground_truth = load_ground_truth()
+    domain: Domain = get_domain(cfg.domain)
+    if cfg.engine == "simulated":
+        engine = domain.build_simulated_engine(cfg.seed)
+    else:
+        engine = get_engine(cfg.engine, seed=cfg.seed)
+    validator = domain.build_validator()
+    critic = domain.build_critic()
+    tasks = domain.load_tasks()
+    ground_truth = domain.load_ground_truth()
     buckets = [str(i) for i in range(1, cfg.max_attempts + 1)] + ["failed"]
 
     cfg.out_dir.mkdir(parents=True, exist_ok=True)
@@ -325,6 +269,8 @@ def run_benchmark(cfg: BenchConfig, file: TextIO = sys.stdout) -> dict[str, Any]
                     run_critic,
                     tasks,
                     ground_truth,
+                    domain.field_names,
+                    domain.field_accuracy,
                     max_attempts,
                     buckets,
                     traces,
@@ -337,10 +283,14 @@ def run_benchmark(cfg: BenchConfig, file: TextIO = sys.stdout) -> dict[str, Any]
             "max_attempts": cfg.max_attempts,
             "ablation": cfg.ablation,
             "engine": cfg.engine,
+            "domain": cfg.domain,
             "out_dir": str(cfg.out_dir),
         },
         "engine_name": engine.name,
         "simulated": engine.name == "simulated",
+        "domain_title": domain.title,
+        "domain_unit": domain.unit,
+        "field_names": list(domain.field_names),
         "num_tasks": len(tasks),
         "configurations": configurations,
     }

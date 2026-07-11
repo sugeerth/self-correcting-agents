@@ -19,17 +19,18 @@ ENGINE_NAMES: tuple[str, ...] = ("simulated", "hermes", "anthropic")
 def get_engine(name: str, **kwargs: Any) -> Engine:
     """Build a ready-to-run engine by name.
 
-    - 'simulated': deterministic seeded fault-injection over the invoice
-      ground truth (kwargs: seed, default 42). Free, CI-safe.
+    - 'simulated': deterministic seeded fault-injection over a domain's
+      ground truth (kwargs: seed, default 42; domain, default 'invoices').
+      Free, CI-safe.
     - 'hermes': local Ollama model (kwargs: model, base_url, timeout). Free.
     - 'anthropic': paid Anthropic adapter (kwargs: model); raises RuntimeError
       if the optional extra or ANTHROPIC_API_KEY is missing.
     """
     if name == "simulated":
-        from selfcorrect.invoices import load_ground_truth
-        from selfcorrect.invoices.errors import build_simulated_engine
+        from selfcorrect.domains import get_domain
 
-        return build_simulated_engine(load_ground_truth(), seed=kwargs.get("seed", 42))
+        domain = get_domain(kwargs.get("domain", "invoices"))
+        return domain.build_simulated_engine(kwargs.get("seed", 42))
     if name == "hermes":
         from selfcorrect.engines.hermes import HermesEngine
 

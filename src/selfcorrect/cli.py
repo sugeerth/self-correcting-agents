@@ -9,16 +9,21 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from selfcorrect.domains import DOMAIN_NAMES
 from selfcorrect.engines import ENGINE_NAMES
 
-#: Seed-42 simulated plan for this task shows two violations (LINE_ITEMS_SUM +
-#: TOTAL_MISMATCH) repaired on attempt 2. inv_021 draws the unfixable path and
-#: demonstrates bounded failure instead — both verified against the current RNG
-#: stream; re-verify if seeds, catalog, or corpus change.
-DEFAULT_DEMO_TASK = "inv_004"
+
+def _add_common_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--domain",
+        choices=DOMAIN_NAMES,
+        default="invoices",
+        help="which domain plug-in to run (default: invoices)",
+    )
 
 
 def _add_engine_args(parser: argparse.ArgumentParser) -> None:
+    _add_common_args(parser)
     parser.add_argument("--seed", type=int, default=42, help="engine seed (default: 42)")
     parser.add_argument(
         "--max-attempts", type=int, default=3, help="repair budget per task (default: 3)"
@@ -27,7 +32,7 @@ def _add_engine_args(parser: argparse.ArgumentParser) -> None:
         "--engine",
         choices=ENGINE_NAMES,
         default="simulated",
-        help="which engine generates extractions (default: simulated)",
+        help="which engine generates outputs (default: simulated)",
     )
 
 
@@ -38,11 +43,11 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    demo = sub.add_parser("demo", help="run one invoice through the loop and print the trace")
+    demo = sub.add_parser("demo", help="run one task through the loop and print the trace")
     demo.add_argument(
         "--task",
-        default=DEFAULT_DEMO_TASK,
-        help=f"corpus task id (default: {DEFAULT_DEMO_TASK})",
+        default=None,
+        help="corpus task id (default: the domain's showcase task)",
     )
     _add_engine_args(demo)
 
@@ -55,27 +60,34 @@ def _build_parser() -> argparse.ArgumentParser:
         help="also run the generic-critic ablation (untargeted feedback)",
     )
 
-    sub.add_parser("list-corpus", help="list the bundled invoice corpus")
+    list_corpus = sub.add_parser("list-corpus", help="list the bundled corpus")
+    _add_common_args(list_corpus)
     return parser
 
 
 def _cmd_demo(args: argparse.Namespace) -> int:
+    from selfcorrect.domains import get_domain
     from selfcorrect.engines import get_engine
-    from selfcorrect.invoices import build_critic, build_validator, load_tasks
     from selfcorrect.loop import SelfCorrectingAgent
     from selfcorrect.trace import pretty_print_run
 
-    tasks = {task.id: task for task in load_tasks()}
-    if args.task not in tasks:
+    domain = get_domain(args.domain)
+    task_id = args.task if args.task is not None else domain.default_demo_task
+    tasks = {task.id: task for task in domain.load_tasks()}
+    if task_id not in tasks:
         ids = ", ".join(sorted(tasks))
-        raise SystemExit(f"unknown task {args.task!r}; available: {ids}")
+        raise SystemExit(f"unknown task {task_id!r}; available: {ids}")
+    if args.engine == "simulated":
+        engine = domain.build_simulated_engine(args.seed)
+    else:
+        engine = get_engine(args.engine, seed=args.seed)
     agent = SelfCorrectingAgent(
-        get_engine(args.engine, seed=args.seed),
-        build_validator(),
-        build_critic(),
+        engine,
+        domain.build_validator(),
+        domain.build_critic(),
         max_attempts=args.max_attempts,
     )
-    result = agent.run(tasks[args.task])
+    result = agent.run(tasks[task_id])
     pretty_print_run(result)
     return 0 if result.success else 1
 
@@ -90,23 +102,21 @@ def _cmd_bench(args: argparse.Namespace) -> int:
             ablation=args.ablation,
             out_dir=args.out,
             engine=args.engine,
+            domain=args.domain,
         )
     )
     return 0
 
 
-def _cmd_list_corpus() -> int:
-    from selfcorrect.invoices import load_ground_truth, load_tasks
+def _cmd_list_corpus(args: argparse.Namespace) -> int:
+    from selfcorrect.domains import get_domain
 
-    truth = load_ground_truth()
-    print(f"{'task id':<10} {'vendor':<34} {'date':<12} {'cur':<4} {'total':>12}")
+    domain = get_domain(args.domain)
+    truth = domain.load_ground_truth()
+    print(f"{'task id':<10} description")
     print("-" * 76)
-    for task in load_tasks():
-        gt = truth[task.id]
-        print(
-            f"{task.id:<10} {gt['vendor']:<34.34} {gt['date']:<12} "
-            f"{gt['currency']:<4} {gt['total']:>12.2f}"
-        )
+    for task in domain.load_tasks():
+        print(f"{task.id:<10} {domain.describe_row(truth[task.id])}")
     return 0
 
 
@@ -117,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_demo(args)
     if args.command == "bench":
         return _cmd_bench(args)
-    return _cmd_list_corpus()
+    return _cmd_list_corpus(args)
 
 
 if __name__ == "__main__":

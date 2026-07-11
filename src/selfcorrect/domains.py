@@ -16,7 +16,7 @@ from typing import Any
 from selfcorrect.types import Critic, Engine, Task, Validator
 
 #: Valid values for get_domain(name) / the CLI --domain flag.
-DOMAIN_NAMES: tuple[str, ...] = ("invoices", "sqlq")
+DOMAIN_NAMES: tuple[str, ...] = ("invoices", "sqlq", "cua")
 
 
 @dataclass(frozen=True)
@@ -45,6 +45,10 @@ def get_domain(name: str) -> Domain:
         return DOMAIN
     if name == "sqlq":
         from selfcorrect.sqlq import DOMAIN
+
+        return DOMAIN
+    if name == "cua":
+        from selfcorrect.cua import DOMAIN
 
         return DOMAIN
     raise ValueError(f"Unknown domain {name!r}; valid domains: {', '.join(DOMAIN_NAMES)}")

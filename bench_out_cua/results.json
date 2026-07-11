@@ -1,0 +1,488 @@
+{
+  "config": {
+    "seed": 42,
+    "max_attempts": 3,
+    "ablation": true,
+    "engine": "simulated",
+    "domain": "cua",
+    "out_dir": "bench_out_cua"
+  },
+  "engine_name": "simulated",
+  "simulated": true,
+  "domain_title": "computer use",
+  "domain_unit": "flows",
+  "field_names": [
+    "completed",
+    "route",
+    "flight",
+    "traveler"
+  ],
+  "num_tasks": 10,
+  "configurations": [
+    {
+      "name": "off",
+      "max_attempts": 1,
+      "metrics": {
+        "fully_valid_rate": 0.5,
+        "field_accuracy": {
+          "completed": 0.6,
+          "route": 0.8,
+          "flight": 0.9,
+          "traveler": 0.6,
+          "macro_avg": 0.725
+        },
+        "attempts_histogram": {
+          "1": 5,
+          "2": 0,
+          "3": 0,
+          "failed": 5
+        },
+        "mean_attempts": 1.0,
+        "total_latency_s": 8.183578915483054,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "cua_001",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.036081082516751,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_002",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 0.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.3978762683980637,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_003",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 1.1450719193805512,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_004",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 0.5039248109513859,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_005",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.3683285346313863,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_006",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.7996402016565687,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.9838424961491217,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_008",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 0.0,
+            "flight": 0.0,
+            "traveler": 0.0
+          },
+          "latency_s": 0.9228846927227381,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.078857113609839,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_010",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 0.9470717954666472,
+          "cost_usd": 0.0
+        }
+      ]
+    },
+    {
+      "name": "on",
+      "max_attempts": 3,
+      "metrics": {
+        "fully_valid_rate": 0.9,
+        "field_accuracy": {
+          "completed": 0.9,
+          "route": 0.9,
+          "flight": 0.9,
+          "traveler": 0.9,
+          "macro_avg": 0.9
+        },
+        "attempts_histogram": {
+          "1": 5,
+          "2": 3,
+          "3": 1,
+          "failed": 1
+        },
+        "mean_attempts": 1.7,
+        "total_latency_s": 13.719200243105302,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "cua_001",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.036081082516751,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_002",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.3035559155452585,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_003",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.5356304155777392,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_004",
+          "success": true,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 2.1623028399748225,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_005",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.3683285346313863,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_006",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.7996402016565687,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.9838424961491217,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_008",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 0.0,
+            "flight": 0.0,
+            "traveler": 0.0
+          },
+          "latency_s": 2.9471592366682122,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.078857113609839,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_010",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.5038024067756024,
+          "cost_usd": 0.0
+        }
+      ]
+    },
+    {
+      "name": "on_generic",
+      "max_attempts": 3,
+      "metrics": {
+        "fully_valid_rate": 0.5,
+        "field_accuracy": {
+          "completed": 0.6,
+          "route": 0.8,
+          "flight": 0.9,
+          "traveler": 0.6,
+          "macro_avg": 0.725
+        },
+        "attempts_histogram": {
+          "1": 5,
+          "2": 0,
+          "3": 0,
+          "failed": 5
+        },
+        "mean_attempts": 2.0,
+        "total_latency_s": 16.181191553976028,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "cua_001",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.036081082516751,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_002",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 0.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 2.22977892094506,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_003",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 2.2840168245676957,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_004",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 2.1623028399748225,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_005",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.3683285346313863,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_006",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.7996402016565687,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 0.9838424961491217,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_008",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 0.0,
+            "flight": 0.0,
+            "traveler": 0.0
+          },
+          "latency_s": 2.9471592366682122,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "completed": 1.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 1.0
+          },
+          "latency_s": 1.078857113609839,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "cua_010",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "completed": 0.0,
+            "route": 1.0,
+            "flight": 1.0,
+            "traveler": 0.0
+          },
+          "latency_s": 2.291184303256572,
+          "cost_usd": 0.0
+        }
+      ]
+    }
+  ]
+}

@@ -31,6 +31,37 @@ that makes realistic, feedback-addressable mistakes. It runs anywhere, costs not
 is fully reproducible (seeded) — so the benchmark measures the *mechanics* of
 self-correction, not any particular model's quality.
 
+<details>
+<summary><b>What the demo prints</b> — one invoice caught and repaired (click to expand)</summary>
+
+```text
+Task: inv_004
+────────────────────────────────────────────────────────────────────────
+Attempt 1/2 — engine: simulated
+  ...
+  CODE           │ FIELD    │ EXPECTED -> ACTUAL
+  ───────────────┼──────────┼───────────────────
+  LINE_ITEMS_SUM │ subtotal │ 31438.02 -> 17427.84
+  TOTAL_MISMATCH │ total    │ 37725.62 -> 700.26
+  Feedback to agent:
+    • Line item amounts sum to 17427.84 but the stated subtotal is 31438.02. You likely
+      missed a line item or misread one amount — re-scan the items section...
+    • The extracted total (700.26) does not equal subtotal + tax (37725.62). Invoices
+      often show several candidate amounts... pick the final payable total.
+────────────────────────────────────────────────────────────────────────
+Attempt 2/2 — engine: simulated
+  ...
+  violations: none
+────────────────────────────────────────────────────────────────────────
+VALID after 2 attempt(s)
+```
+
+The other path matters too: `--task inv_021` draws an *unfixable* fault plan and shows
+the loop failing loudly after 3 bounded attempts with its best attempt attached — no
+infinite retries, no silent bad output.
+
+</details>
+
 ## What the loop buys you
 
 24-invoice corpus, seed 42, max 3 attempts — **simulated engine** (see disclaimer above):
@@ -45,6 +76,8 @@ The ablation is the headline: the same retry budget with *untargeted* feedback f
 nothing — the lift comes from structured violations rendered into specific repair
 instructions, not from retrying harder. Full tables: run the bench, or see the
 [blog post](https://sugeerth.github.io/self-correcting-agents/).
+
+![attempts histogram](bench_out/attempts.svg)
 
 ## Architecture
 

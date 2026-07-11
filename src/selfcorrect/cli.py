@@ -11,9 +11,11 @@ from pathlib import Path
 
 from selfcorrect.engines import ENGINE_NAMES
 
-#: Seed-42 simulated plan for this task injects currency_swap + digit_transposed,
-#: so the demo shows three violations repaired on attempt 2 (chosen empirically).
-DEFAULT_DEMO_TASK = "inv_021"
+#: Seed-42 simulated plan for this task shows two violations (LINE_ITEMS_SUM +
+#: TOTAL_MISMATCH) repaired on attempt 2. inv_021 draws the unfixable path and
+#: demonstrates bounded failure instead — both verified against the current RNG
+#: stream; re-verify if seeds, catalog, or corpus change.
+DEFAULT_DEMO_TASK = "inv_004"
 
 
 def _add_engine_args(parser: argparse.ArgumentParser) -> None:

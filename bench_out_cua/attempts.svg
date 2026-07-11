@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="542" height="266" font-family="Menlo, monospace" font-size="12">
+<text x="50" y="20" font-size="14" font-weight="bold">Attempts to converge (count of tasks)</text>
+<line x1="50" y1="226" x2="532" y2="226" stroke="#333"/>
+<rect x="50" y="30" width="12" height="12" fill="#4c78a8"/>
+<text x="66" y="41">off</text>
+<rect x="200" y="30" width="12" height="12" fill="#f58518"/>
+<text x="216" y="41">on</text>
+<rect x="350" y="30" width="12" height="12" fill="#54a24b"/>
+<text x="366" y="41">on_generic</text>
+<rect x="50" y="56" width="26" height="170" fill="#4c78a8"/>
+<text x="63" y="52" text-anchor="middle">5</text>
+<rect x="80" y="56" width="26" height="170" fill="#f58518"/>
+<text x="93" y="52" text-anchor="middle">5</text>
+<rect x="110" y="56" width="26" height="170" fill="#54a24b"/>
+<text x="123" y="52" text-anchor="middle">5</text>
+<text x="95" y="244" text-anchor="middle">1 attempt(s)</text>
+<rect x="168" y="226" width="26" height="0" fill="#4c78a8"/>
+<text x="181" y="222" text-anchor="middle">0</text>
+<rect x="198" y="124" width="26" height="102" fill="#f58518"/>
+<text x="211" y="120" text-anchor="middle">3</text>
+<rect x="228" y="226" width="26" height="0" fill="#54a24b"/>
+<text x="241" y="222" text-anchor="middle">0</text>
+<text x="213" y="244" text-anchor="middle">2 attempt(s)</text>
+<rect x="286" y="226" width="26" height="0" fill="#4c78a8"/>
+<text x="299" y="222" text-anchor="middle">0</text>
+<rect x="316" y="192" width="26" height="34" fill="#f58518"/>
+<text x="329" y="188" text-anchor="middle">1</text>
+<rect x="346" y="226" width="26" height="0" fill="#54a24b"/>
+<text x="359" y="222" text-anchor="middle">0</text>
+<text x="331" y="244" text-anchor="middle">3 attempt(s)</text>
+<rect x="404" y="56" width="26" height="170" fill="#4c78a8"/>
+<text x="417" y="52" text-anchor="middle">5</text>
+<rect x="434" y="192" width="26" height="34" fill="#f58518"/>
+<text x="447" y="188" text-anchor="middle">1</text>
+<rect x="464" y="56" width="26" height="170" fill="#54a24b"/>
+<text x="477" y="52" text-anchor="middle">5</text>
+<text x="449" y="244" text-anchor="middle">failed</text>
+</svg>

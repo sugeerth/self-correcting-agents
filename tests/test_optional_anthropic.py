@@ -44,6 +44,7 @@ assert "anthropic" not in sys.modules, "anthropic leaked into the core import"
 assert "pydantic" not in sys.modules, "pydantic leaked into the core import"
 assert "selfcorrect.invoices" not in sys.modules, "domain package leaked into the core import"
 assert "selfcorrect.sqlq" not in sys.modules, "domain package leaked into the core import"
+assert "selfcorrect.cua" not in sys.modules, "domain package leaked into the core import"
 """
 
 # (b) get_engine('anthropic') must fail loudly with an actionable message,

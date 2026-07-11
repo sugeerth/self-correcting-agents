@@ -1,0 +1,526 @@
+{
+  "config": {
+    "seed": 42,
+    "max_attempts": 3,
+    "ablation": true,
+    "engine": "simulated",
+    "domain": "sqlq",
+    "out_dir": "bench_out_sqlq"
+  },
+  "engine_name": "simulated",
+  "simulated": true,
+  "domain_title": "text-to-SQL",
+  "domain_unit": "queries",
+  "field_names": [
+    "executes",
+    "result_columns",
+    "result_rows"
+  ],
+  "num_tasks": 12,
+  "configurations": [
+    {
+      "name": "off",
+      "max_attempts": 1,
+      "metrics": {
+        "fully_valid_rate": 0.25,
+        "field_accuracy": {
+          "executes": 0.9166666666666666,
+          "result_columns": 0.6666666666666666,
+          "result_rows": 0.4166666666666667,
+          "macro_avg": 0.6666666666666666
+        },
+        "attempts_histogram": {
+          "1": 3,
+          "2": 0,
+          "3": 0,
+          "failed": 9
+        },
+        "mean_attempts": 1.0,
+        "total_latency_s": 10.066204166635108,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "sql_001",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.0157930781674251,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_002",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.4595439699318424,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_003",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.0134840721326526,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_004",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 0.9360498859422672,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_005",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.199372405935113,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_006",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 0.4974926044310855,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.30314128201394014,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_008",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.170634854724786,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.7518316961360894,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_010",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.8590110966720541,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_011",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 0.0,
+            "result_columns": 0.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 0.7139539317993948,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_012",
+          "success": false,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.1458952887484573,
+          "cost_usd": 0.0
+        }
+      ]
+    },
+    {
+      "name": "on",
+      "max_attempts": 3,
+      "metrics": {
+        "fully_valid_rate": 0.9166666666666666,
+        "field_accuracy": {
+          "executes": 1.0,
+          "result_columns": 1.0,
+          "result_rows": 0.9166666666666666,
+          "macro_avg": 0.9722222222222222
+        },
+        "attempts_histogram": {
+          "1": 3,
+          "2": 7,
+          "3": 1,
+          "failed": 1
+        },
+        "mean_attempts": 1.9166666666666667,
+        "total_latency_s": 17.87392727399834,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "sql_001",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.3521246706603984,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_002",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.0195257952643135,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_003",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 2.0657442062528153,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_004",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 2.1236311977589235,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_005",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.5934682059771688,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_006",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 2.347480568957504,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.30314128201394014,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_008",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 2.1448045966154585,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.7518316961360894,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_010",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.8590110966720541,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_011",
+          "success": true,
+          "num_attempts": 2,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.3696701815377725,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_012",
+          "success": true,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.9434937761519033,
+          "cost_usd": 0.0
+        }
+      ]
+    },
+    {
+      "name": "on_generic",
+      "max_attempts": 3,
+      "metrics": {
+        "fully_valid_rate": 0.25,
+        "field_accuracy": {
+          "executes": 0.9166666666666666,
+          "result_columns": 0.6666666666666666,
+          "result_rows": 0.4166666666666667,
+          "macro_avg": 0.6666666666666666
+        },
+        "attempts_histogram": {
+          "1": 3,
+          "2": 0,
+          "3": 0,
+          "failed": 9
+        },
+        "mean_attempts": 2.5,
+        "total_latency_s": 23.157313245912245,
+        "total_cost_usd": 0.0
+      },
+      "tasks": [
+        {
+          "task_id": "sql_001",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 2.639853033264619,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_002",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 2.128554341614887,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_003",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 3.019437506299169,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_004",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 2.608926367736375,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_005",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 0.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 1.9083939659831322,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_006",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 2.347480568957504,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_007",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.30314128201394014,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_008",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 2.78545030479313,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_009",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.7518316961360894,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_010",
+          "success": true,
+          "num_attempts": 1,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 1.0
+          },
+          "latency_s": 0.8590110966720541,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_011",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 0.0,
+            "result_columns": 0.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.861739306289441,
+          "cost_usd": 0.0
+        },
+        {
+          "task_id": "sql_012",
+          "success": false,
+          "num_attempts": 3,
+          "field_accuracy": {
+            "executes": 1.0,
+            "result_columns": 1.0,
+            "result_rows": 0.0
+          },
+          "latency_s": 1.9434937761519033,
+          "cost_usd": 0.0
+        }
+      ]
+    }
+  ]
+}

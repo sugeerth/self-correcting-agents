@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Correcting Agents — Trace Replay</title>
+<style>
+  :root {
+    --bg: #f6f7f8;
+    --surface: #ffffff;
+    --surface-2: #eef0f2;
+    --text: #1b1f24;
+    --muted: #5a636e;
+    --border: #d9dee3;
+    --accent: #2563c4;
+    --ok: #1a7f37;
+    --ok-bg: #e6f4ea;
+    --bad: #c03434;
+    --bad-bg: #fbeaea;
+    --warn: #9a6700;
+    --term-bg: #10151c;
+    --term-text: #d7dee6;
+    --term-dim: #7d8894;
+    --term-ok: #4cc38a;
+    --term-bad: #ff7b72;
+    --shadow: 0 1px 3px rgba(15, 23, 42, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-2: #1f262e;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --border: #2d333b;
+      --accent: #58a6ff;
+      --ok: #3fb950;
+      --ok-bg: rgba(46, 160, 67, .16);
+      --bad: #f47067;
+      --bad-bg: rgba(248, 81, 73, .14);
+      --warn: #d29922;
+      --term-bg: #090c10;
+      --term-text: #c9d4de;
+      --term-dim: #6b7681;
+      --term-ok: #3fb950;
+      --term-bad: #ff7b72;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  code, pre, .mono, .vtable, .task-chip .tid {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+
+  /* ---------- header ---------- */
+  header.site h1 { margin: 0 0 2px; font-size: 26px; letter-spacing: -.02em; }
+  header.site .sub { color: var(--muted); margin: 0 0 14px; }
+  header.site .sub .arrow { color: var(--accent); }
+  .links { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; margin-bottom: 14px; }
+  .links a { color: var(--accent); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+  .banner {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .banner strong { color: var(--accent); }
+
+  /* ---------- tabs ---------- */
+  .tabs { display: flex; gap: 8px; margin: 22px 0 0; flex-wrap: wrap; }
+  .tab {
+    appearance: none; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); padding: 7px 16px; border-radius: 999px; font-size: 14px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .tab:hover { border-color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .explainer { color: var(--muted); font-size: 13.5px; margin: 10px 0 18px; }
+
+  /* ---------- task picker ---------- */
+  .tasks { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+  .task-chip {
+    appearance: none; display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    border-radius: 7px; padding: 5px 9px; font-size: 12.5px; cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .task-chip:hover { border-color: var(--accent); }
+  .task-chip.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .task-chip .tid { font-size: 12.5px; }
+  .badge {
+    font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+    letter-spacing: .02em; white-space: nowrap;
+  }
+  .badge.ok { color: var(--ok); background: var(--ok-bg); }
+  .badge.bad { color: var(--bad); background: var(--bad-bg); }
+
+  /* ---------- controls ---------- */
+  .controls {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); box-shadow: var(--shadow); margin-bottom: 14px;
+    position: sticky; top: 8px; z-index: 5;
+  }
+  .btn {
+    appearance: none; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface-2); color: var(--text); padding: 6px 14px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: border-color .15s;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--accent); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .status { font-size: 13px; color: var(--muted); margin-left: auto; }
+  .status .final-ok { color: var(--ok); font-weight: 700; }
+  .status .final-bad { color: var(--bad); font-weight: 700; }
+  .kbd-hint { font-size: 11.5px; color: var(--muted); width: 100%; }
+  kbd {
+    border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+    padding: 0 5px; font-size: 11px; background: var(--surface-2);
+    font-family: inherit;
+  }
+
+  /* ---------- task meta ---------- */
+  .task-meta { margin-bottom: 14px; }
+  .task-meta summary {
+    cursor: pointer; font-size: 13px; color: var(--muted); user-select: none;
+  }
+  .task-meta summary:hover { color: var(--accent); }
+  .task-meta pre {
+    margin: 8px 0 0; padding: 12px; border-radius: 8px; background: var(--term-bg);
+    color: var(--term-text); font-size: 12px; line-height: 1.5;
+    overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+  }
+
+  /* ---------- attempt cards ---------- */
+  .attempts { display: flex; flex-direction: column; gap: 14px; }
+  .attempt {
+    border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+    box-shadow: var(--shadow); overflow: hidden;
+    animation: rise .45s cubic-bezier(.2,.7,.3,1);
+  }
+  .attempt.no-anim { animation: none; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .attempt { animation: none; }
+  }
+  .attempt > .head {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border-bottom: 1px solid var(--border); background: var(--surface-2);
+  }
+  .attempt > .head .n { font-weight: 700; font-size: 14px; }
+  .attempt .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .attempt .body > * { min-width: 0; } /* let scroll containers shrink inside the flex column */
+  .verdict {
+    padding: 9px 14px; border-radius: 8px; font-weight: 700; font-size: 13.5px;
+    letter-spacing: .02em;
+  }
+  .verdict.ok  { color: var(--ok);  background: var(--ok-bg);  border: 1px solid var(--ok); }
+  .verdict.bad { color: var(--bad); background: var(--bad-bg); border: 1px solid var(--bad); }
+
+  .out details summary {
+    cursor: pointer; font-size: 13px; color: var(--muted); user-select: none;
+  }
+  .out details summary:hover { color: var(--accent); }
+  .out pre {
+    margin: 8px 0 0; padding: 12px; border-radius: 8px; background: var(--term-bg);
+    color: var(--term-text); font-size: 12px; line-height: 1.5; overflow-x: auto;
+  }
+
+  .vwrap { border-radius: 8px; background: var(--term-bg); overflow-x: auto; }
+  .vtable { border-collapse: collapse; width: 100%; font-size: 12px; min-width: 480px; }
+  .vtable caption {
+    text-align: left; color: var(--term-dim); padding: 8px 12px 0; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase; caption-side: top;
+  }
+  .vtable th {
+    text-align: left; color: var(--term-dim); font-weight: 600; font-size: 11px;
+    letter-spacing: .06em; padding: 8px 12px 4px; border-bottom: 1px solid #2a323b;
+  }
+  .vtable td {
+    color: var(--term-text); padding: 6px 12px; vertical-align: top;
+    border-bottom: 1px solid rgba(125,136,148,.15);
+  }
+  .vtable tr:last-child td { border-bottom: none; padding-bottom: 10px; }
+  .vtable .code { color: var(--term-bad); font-weight: 700; white-space: nowrap; }
+  .vtable .field { color: var(--term-ok); }
+  .vtable .exp { color: var(--term-text); }
+  .vtable .msg { color: var(--term-dim); }
+  .arrow-sep { color: var(--term-dim); padding: 0 4px; }
+
+  .fb { border-left: 3px solid var(--accent); padding: 2px 0 2px 12px; margin: 0; }
+  .fb .fb-title {
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .fb blockquote { margin: 0; }
+  .fb p { margin: 3px 0; font-size: 13px; color: var(--text); }
+  .fb p::before { content: "› "; color: var(--accent); font-weight: 700; }
+
+  .placeholder {
+    border: 1px dashed var(--border); border-radius: 12px; padding: 28px 16px;
+    text-align: center; color: var(--muted); font-size: 14px;
+  }
+
+  footer.site {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 12.5px;
+  }
+  @media (max-width: 480px) {
+    header.site h1 { font-size: 21px; }
+    .status { width: 100%; margin-left: 0; }
+    .wrap { padding: 16px 10px 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <h1>Self-Correcting Agents</h1>
+    <p class="sub">generate <span class="arrow">→</span> validate <span class="arrow">→</span> critique <span class="arrow">→</span> repair &nbsp;·&nbsp; recorded trace replay</p>
+    <div class="links">
+      <a href="https://github.com/sugeerth/self-correcting-agents">github.com/sugeerth/self-correcting-agents</a>
+      <a href="./index.html">read the blog post</a>
+    </div>
+    <div class="banner">
+      <strong>100% honest demo:</strong> Every run below is a real recorded execution of the Python loop (simulated engine, seed 42) — replayed, not re-simulated.
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="domains"></nav>
+  <p class="explainer">OFF, the engine's first attempt would be the answer. The loop catches violations with executable checks and feeds targeted repair instructions back.</p>
+
+  <div class="tasks" id="tasks" role="listbox" aria-label="tasks"></div>
+
+  <div class="controls">
+    <button class="btn primary" id="btn-run" title="replay all attempts">▶ Run</button>
+    <button class="btn" id="btn-step" title="advance one attempt">Step</button>
+    <button class="btn" id="btn-reset" title="clear the replay">Reset</button>
+    <span class="status" id="status"></span>
+    <span class="kbd-hint"><kbd>←</kbd>/<kbd>→</kbd> step attempts &nbsp;·&nbsp; <kbd>r</kbd> reset</span>
+  </div>
+
+  <details class="task-meta" id="task-meta">
+    <summary>show task input</summary>
+    <pre id="task-prompt"></pre>
+  </details>
+
+  <div class="attempts" id="attempts"></div>
+
+  <footer class="site" id="footer"></footer>
+</div>
+
+<script src="demo_data.js"></script>
+<script>
+(function () {
+  "use strict";
+  var DATA = window.DEMO_DATA;
+  if (!DATA || !DATA.domains || !DATA.domains.length) {
+    document.getElementById("attempts").innerHTML =
+      '<div class="placeholder">demo_data.js failed to load — run <code>uv run python tools/export_demo_traces.py</code> and reload.</div>';
+    return;
+  }
+
+  var state = { d: 0, t: 0, shown: 0, timer: null };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function currentTask() { return DATA.domains[state.d].tasks[state.t]; }
+  function stop() {
+    if (state.timer !== null) { clearInterval(state.timer); state.timer = null; }
+  }
+
+  /* ---------- default selection: first task that fails once then repairs ---------- */
+  function findDefault() {
+    for (var d = 0; d < DATA.domains.length; d++) {
+      var tasks = DATA.domains[d].tasks;
+      for (var t = 0; t < tasks.length; t++) {
+        if (tasks[t].success && tasks[t].attempts.length === 2) return { d: d, t: t };
+      }
+    }
+    return { d: 0, t: 0 };
+  }
+  function defaultTaskInDomain(d) {
+    var tasks = DATA.domains[d].tasks;
+    for (var t = 0; t < tasks.length; t++) {
+      if (tasks[t].success && tasks[t].attempts.length === 2) return t;
+    }
+    return 0;
+  }
+
+  /* ---------- rendering ---------- */
+  function renderTabs() {
+    var html = "";
+    DATA.domains.forEach(function (dom, i) {
+      html += '<button class="tab' + (i === state.d ? " active" : "") +
+        '" data-d="' + i + '" role="tab" aria-selected="' + (i === state.d) + '">' +
+        esc(dom.title) + "</button>";
+    });
+    $("tabs").innerHTML = html;
+  }
+
+  function taskBadge(task) {
+    return task.success
+      ? '<span class="badge ok">✓ ' + task.attempts.length + "</span>"
+      : '<span class="badge bad">✗ failed</span>';
+  }
+
+  function renderTasks() {
+    var html = "";
+    DATA.domains[state.d].tasks.forEach(function (task, i) {
+      html += '<button class="task-chip' + (i === state.t ? " active" : "") +
+        '" data-t="' + i + '" role="option" aria-selected="' + (i === state.t) + '">' +
+        '<span class="tid">' + esc(task.id) + "</span>" + taskBadge(task) + "</button>";
+    });
+    $("tasks").innerHTML = html;
+  }
+
+  function renderPrompt() {
+    var meta = $("task-meta");
+    meta.open = false;
+    meta.querySelector("summary").textContent = "show task input (" + currentTask().id + ")";
+    $("task-prompt").textContent = currentTask().prompt;
+  }
+
+  function violationsTable(violations) {
+    if (!violations.length) return "";
+    var rows = violations.map(function (v) {
+      var ea;
+      if (v.expected !== null && v.expected !== undefined &&
+          v.actual !== null && v.actual !== undefined) {
+        ea = '<span class="exp">' + esc(v.expected) + "</span>" +
+             '<span class="arrow-sep">→</span>' +
+             '<span class="exp">' + esc(v.actual) + "</span>";
+      } else {
+        ea = '<span class="msg">' + esc(v.message) + "</span>";
+      }
+      return "<tr><td class=\"code\">" + esc(v.code) + "</td>" +
+             "<td class=\"field\">" + esc(v.field) + "</td>" +
+             "<td>" + ea + "</td></tr>";
+    }).join("");
+    return '<div class="vwrap"><table class="vtable">' +
+      "<caption>validator · " + violations.length +
+      (violations.length === 1 ? " violation" : " violations") + "</caption>" +
+      "<thead><tr><th>CODE</th><th>FIELD</th><th>EXPECTED → ACTUAL</th></tr></thead>" +
+      "<tbody>" + rows + "</tbody></table></div>";
+  }
+
+  function feedbackBlock(feedback) {
+    if (!feedback.length) return "";
+    var lines = feedback.map(function (f) { return "<p>" + esc(f) + "</p>"; }).join("");
+    return '<div class="fb"><div class="fb-title">critic → engine repair instructions</div>' +
+      "<blockquote>" + lines + "</blockquote></div>";
+  }
+
+  function attemptCard(task, i, animate) {
+    var a = task.attempts[i];
+    var isFinal = i === task.attempts.length - 1;
+    var card = document.createElement("article");
+    card.className = "attempt" + (animate ? "" : " no-anim");
+
+    var head = '<div class="head"><span class="n">Attempt ' + a.index + " / " +
+      task.attempts.length + "</span>" +
+      (a.valid
+        ? '<span class="badge ok">✓ valid</span>'
+        : '<span class="badge bad">✗ ' + a.violations.length +
+          (a.violations.length === 1 ? " violation" : " violations") + "</span>") +
+      "</div>";
+
+    var verdict = "";
+    if (a.valid) {
+      verdict = '<div class="verdict ok">VALID — passed every executable check</div>';
+    } else if (isFinal && !task.success) {
+      verdict = '<div class="verdict bad">FAILED after ' + task.attempts.length +
+        " bounded attempts — best attempt returned</div>";
+    }
+
+    var out = a.output === null || a.output === undefined
+      ? '<div class="out"><em style="color:var(--muted);font-size:13px">engine returned no output</em></div>'
+      : '<div class="out"><details><summary>candidate output (JSON)</summary><pre>' +
+        esc(a.output) + "</pre></details></div>";
+
+    card.innerHTML = head + '<div class="body">' + verdict + out +
+      violationsTable(a.violations) + feedbackBlock(a.feedback) + "</div>";
+    return card;
+  }
+
+  function renderStatus() {
+    var task = currentTask();
+    var n = task.attempts.length;
+    var s;
+    if (state.shown === 0) {
+      s = "ready · " + n + (n === 1 ? " attempt" : " attempts") + " recorded";
+    } else if (state.shown < n) {
+      s = "attempt " + state.shown + " of " + n + "…";
+    } else {
+      s = task.success
+        ? '<span class="final-ok">✓ valid after ' + n + (n === 1 ? " attempt" : " attempts") + "</span>"
+        : '<span class="final-bad">✗ failed after ' + n + " attempts</span>";
+    }
+    $("status").innerHTML = s;
+    $("btn-step").disabled = state.shown >= n;
+  }
+
+  function renderAttempts() {
+    var box = $("attempts");
+    box.innerHTML = "";
+    var task = currentTask();
+    if (state.shown === 0) {
+      box.innerHTML = '<div class="placeholder">Press <strong>▶ Run</strong> to replay the recorded loop' +
+        " — attempts appear one by one, exactly as the Python agent produced them.</div>";
+    } else {
+      for (var i = 0; i < state.shown; i++) box.appendChild(attemptCard(task, i, false));
+    }
+    renderStatus();
+  }
+
+  /* ---------- replay engine ---------- */
+  function stepForward(animate) {
+    var task = currentTask();
+    if (state.shown >= task.attempts.length) return false;
+    if (state.shown === 0) $("attempts").innerHTML = "";
+    state.shown++;
+    $("attempts").appendChild(attemptCard(task, state.shown - 1, animate !== false));
+    renderStatus();
+    return true;
+  }
+  function stepBack() {
+    if (state.shown === 0) return;
+    state.shown--;
+    if (state.shown === 0) { renderAttempts(); return; }
+    var box = $("attempts");
+    box.removeChild(box.lastElementChild);
+    renderStatus();
+  }
+  function reset() { stop(); state.shown = 0; renderAttempts(); }
+  function play() {
+    stop();
+    state.shown = 0;
+    renderAttempts();
+    $("attempts").innerHTML = "";
+    stepForward();
+    state.timer = setInterval(function () {
+      if (!stepForward()) stop();
+    }, 700);
+  }
+
+  /* ---------- selection ---------- */
+  function selectTask(t) {
+    stop();
+    state.t = t;
+    state.shown = 0;
+    renderTasks();
+    renderPrompt();
+    play();
+  }
+  function selectDomain(d) {
+    stop();
+    state.d = d;
+    renderTabs();
+    selectTask(defaultTaskInDomain(d));
+  }
+
+  /* ---------- events ---------- */
+  $("tabs").addEventListener("click", function (e) {
+    var b = e.target.closest(".tab");
+    if (b) selectDomain(Number(b.dataset.d));
+  });
+  $("tasks").addEventListener("click", function (e) {
+    var b = e.target.closest(".task-chip");
+    if (b) selectTask(Number(b.dataset.t));
+  });
+  $("btn-run").addEventListener("click", play);
+  $("btn-step").addEventListener("click", function () { stop(); stepForward(); });
+  $("btn-reset").addEventListener("click", reset);
+  document.addEventListener("keydown", function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === "ArrowRight") { stop(); stepForward(); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { stop(); stepBack(); e.preventDefault(); }
+    else if (e.key === "r" || e.key === "R") { reset(); }
+  });
+
+  /* ---------- footer ---------- */
+  (function renderFooter() {
+    var g = DATA.generated_with || {};
+    var nTasks = 0, nRepaired = 0;
+    DATA.domains.forEach(function (dom) {
+      nTasks += dom.tasks.length;
+      dom.tasks.forEach(function (t) {
+        if (t.success && t.attempts.length > 1) nRepaired++;
+      });
+    });
+    $("footer").innerHTML =
+      esc(nTasks) + " recorded runs across " + DATA.domains.length + " domains · " +
+      esc(nRepaired) + " repaired mid-loop · traces exported by " +
+      "<code>tools/export_demo_traces.py</code> (engine: " + esc(g.engine || "?") +
+      ", seed " + esc(g.seed) + ", max_attempts " + esc(g.max_attempts) + ")";
+  })();
+
+  /* ---------- boot ---------- */
+  var def = findDefault();
+  state.d = def.d;
+  renderTabs();
+  selectTask(def.t);
+})();
+</script>
+</body>
+</html>

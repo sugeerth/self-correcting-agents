@@ -1,221 +1,219 @@
 # self-correcting-agents
 
+**A small Python framework that catches an agent's bad output with executable checks and feeds it a specific fix — instead of just retrying and hoping.**
+
 [![CI](https://github.com/sugeerth/self-correcting-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/sugeerth/self-correcting-agents/actions/workflows/ci.yml)
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![License MIT](https://img.shields.io/badge/license-MIT-green)
+![Runtime dependencies 0](https://img.shields.io/badge/runtime%20deps-0-lightgrey)
 
-Agents that catch and fix their own mistakes: a **generate → validate → critique → repair**
-loop with zero runtime dependencies, demonstrated on structured invoice extraction.
+**[Watch the loop repair itself](https://sugeerth.github.io/self-correcting-agents/demo.html)** — a step-through replay of real recorded runs, covering all 46 corpus tasks across the three domains.
+**[Write-up](https://sugeerth.github.io/self-correcting-agents/)** ([markdown source](docs/index.md))
 
-📖 **Blog post:** [Self-Correcting Agents: Teaching an Agent to Catch and Fix Its Own Mistakes](https://sugeerth.github.io/self-correcting-agents/) ([markdown](docs/index.md))
+> When an LLM step fails in a pipeline, it rarely crashes. It returns a plausible-looking wrong answer: right JSON shape, right field names, and a total that is actually the pre-discount amount. Nothing throws, and you find out weeks later from a reconciliation report. The reflex fix is "add retries" — but a naive retry re-rolls the dice with no new information, so the agent that produced the wrong total produces it again. This repo implements the alternative and measures the mechanics of it.
 
-▶ **[Interactive demo](https://sugeerth.github.io/self-correcting-agents/demo.html)** — watch real recorded runs catch violations and repair themselves, across all three domains (replayed, not re-simulated).
+---
 
-```
- input ───────► [ GENERATE ] ───► candidate ───► [ VALIDATE ] ──ok──► output
-                     ▲                                 │ fail
-                     │                                 ▼
-               repair prompt ◄──── [ CRITIQUE ] ◄── violations
-               (bounded: max N attempts, then fail loudly with the best attempt)
-```
+## Quickstart
 
-## 60-second quickstart (free, no API keys)
+The loop itself runs fully offline: no API keys, no network calls, no model download. The
+default engine is a seeded fault-injection simulation. (`pip install` does reach PyPI once,
+to fetch the `hatchling` build backend — there are zero *runtime* dependencies.)
 
 ```bash
 git clone https://github.com/sugeerth/self-correcting-agents
 cd self-correcting-agents
-uv run python -m selfcorrect demo --task inv_004   # watch one invoice get caught and repaired
-uv run python -m selfcorrect bench --ablation      # full benchmark -> bench_out/
+python3 -m venv .venv && source .venv/bin/activate
+python3 -m pip install -e .
+python3 -m selfcorrect demo --domain sqlq
 ```
 
-The default engine is a **deterministic fault-injection simulation**: a flawed extractor
-that makes realistic, feedback-addressable mistakes. It runs anywhere, costs nothing, and
-is fully reproducible (seeded) — so the benchmark measures the *mechanics* of
-self-correction, not any particular model's quality.
-
-<details>
-<summary><b>What the demo prints</b> — one invoice caught and repaired (click to expand)</summary>
+Verbatim output of that last command — attempt 1 fails a check, the critic says *what* is
+wrong, attempt 2 passes:
 
 ```text
-Task: inv_004
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Task: sql_003
 ────────────────────────────────────────────────────────────────────────
-Attempt 1/2 — engine: simulated
-  ...
-  CODE           │ FIELD    │ EXPECTED -> ACTUAL
-  ───────────────┼──────────┼───────────────────
-  LINE_ITEMS_SUM │ subtotal │ 31438.02 -> 17427.84
-  TOTAL_MISMATCH │ total    │ 37725.62 -> 700.26
+Attempt 1/2 — engine: simulated — 1.01s
+  output:
+    task_id: sql_003
+    sql: SELECT name FROM products WHERE category = 'electronics' AND price > 100 ORDER BY price …
+  CODE            │ FIELD │ EXPECTED -> ACTUAL
+  ────────────────┼───────┼───────────────────
+  WRONG_ROW_COUNT │ sql   │ 2 -> 1
   Feedback to agent:
-    • Line item amounts sum to 17427.84 but the stated subtotal is 31438.02. You likely
-      missed a line item or misread one amount — re-scan the items section...
-    • The extracted total (700.26) does not equal subtotal + tax (37725.62). Invoices
-      often show several candidate amounts... pick the final payable total.
+    • The query runs but returns 1 rows where 2 are expected. Re-read the question's filters — a
+      WHERE condition is probably missing, wrong, or an unrequested LIMIT is cutting rows off.
 ────────────────────────────────────────────────────────────────────────
-Attempt 2/2 — engine: simulated
-  ...
+Attempt 2/2 — engine: simulated — 1.05s
+  output:
+    task_id: sql_003
+    sql: SELECT name FROM products WHERE category = 'electronics' AND price > 100 ORDER BY price …
   violations: none
 ────────────────────────────────────────────────────────────────────────
 VALID after 2 attempt(s)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-The other path matters too: `--task inv_021` draws an *unfixable* fault plan and shows
-the loop failing loudly after 3 bounded attempts with its best attempt attached — no
-infinite retries, no silent bad output.
+The two `sql:` lines look identical because the trace printer caps every line at 100
+characters. The difference is past the cut: attempt 1 ends `… ORDER BY price DESC LIMIT 1`
+(an injected stray `LIMIT`), attempt 2 ends `… ORDER BY price DESC`. Attempt latencies are simulated and
+seed-derived, so this output is byte-stable across runs.
 
-</details>
+More entry points:
 
-## What the loop buys you
+```bash
+python3 -m selfcorrect demo --task inv_021              # a task that FAILS loudly after 3 attempts
+python3 -m selfcorrect list-corpus --domain cua         # what's in a corpus
+python3 -m selfcorrect bench --domain sqlq --ablation --out /tmp/bench_sqlq
+python3 examples/run_demo.py                            # the inv_021 run, via the library API
+python3 -m pip install pytest && python3 -m pytest -q   # 107 tests, no network
+```
 
-24-invoice corpus, seed 42, max 3 attempts — **simulated engine** (see disclaimer above):
+`pytest` is a dev dependency, not a runtime one, so `pip install -e .` does not pull it in
+(there is no `[dev]` extra — CI uses `uv sync --dev`; the `pip install pytest` above is the
+plain-pip equivalent).
 
-| configuration | fully valid | mean attempts |
-|---|---:|---:|
-| self-correction OFF | 58.3% | 1.00 |
-| self-correction ON (targeted critic) | **95.8%** | 1.50 |
-| ablation: generic "please fix it" critic | 58.3% | 1.83 |
+`--domain` accepts `invoices` (default), `sqlq`, `cua`. `--engine` accepts `simulated`
+(default), `hermes` (local Ollama), `anthropic` (optional extra).
 
-The ablation is the headline: the same retry budget with *untargeted* feedback fixes
-nothing — the lift comes from structured violations rendered into specific repair
-instructions, not from retrying harder. Full tables: run the bench, or see the
-[blog post](https://sugeerth.github.io/self-correcting-agents/).
+---
 
-![attempts histogram](bench_out/attempts.svg)
+## How it works
 
-## Architecture
+```mermaid
+flowchart LR
+    T["Task"] --> E["Engine<br/>engines/simulated.py"]
+    E --> V{"Validator<br/>validators.py + rules.py"}
+    V -->|"no violations"| OK["RunResult(success)"]
+    V -->|"structured Violations"| C["Critic<br/>critic.py"]
+    C -->|"targeted Feedback"| E
+    C -.->|"budget exhausted"| F["RunResult(failure)<br/>best attempt, reported loudly"]
+```
 
-| piece | file | job |
+Four pieces, composed by `SelfCorrectingAgent` in
+[`src/selfcorrect/loop.py`](src/selfcorrect/loop.py):
+
+| Piece | Where | Job |
 |---|---|---|
-| `Engine` | `src/selfcorrect/engines/` | produce a candidate, given the task + prior feedback |
-| `Validator` | `src/selfcorrect/validators.py`, `invoices/rules.py` | deterministic checks → structured `Violation`s (Decimal money math, schema, business rules) |
-| `Critic` | `src/selfcorrect/critic.py` | violations → targeted natural-language repair instructions (rule-based templates by default) |
-| loop | `src/selfcorrect/loop.py` | bounded retry orchestration + full per-attempt trace |
-| bench | `src/selfcorrect/bench.py` | OFF vs ON vs ablation; results.json / results.md / SVG |
+| `Engine` | [`engines/`](src/selfcorrect/engines/) | Produce a candidate from the task + prior feedback |
+| `Validator` | [`validators.py`](src/selfcorrect/validators.py), `<domain>/rules.py` | Deterministic checks → structured `Violation`s |
+| `Critic` | [`critic.py`](src/selfcorrect/critic.py) | Violations → targeted natural-language repair instructions |
+| loop | [`loop.py`](src/selfcorrect/loop.py) | Bounded retry + a full per-attempt trace |
 
-The core (`types`, `loop`, `validators`, `critic`, `engines/simulated`) is **domain-agnostic**;
-everything invoice-specific lives in `selfcorrect/invoices/` as a plug-in (schema, business
-rules, feedback templates, error catalog, corpus). Tests enforce the boundary.
+The architectural invariant is enforced in `loop.py`: **the engine never sees a raw
+`Violation`.** The only call into the engine is
+`self.engine.generate(task, feedback_history)` — validators speak in structured violations,
+the critic translates them into instructions, and only the translation reaches the
+generator.
 
-## Proof it generalizes: a second domain
+The core (`types`, `loop`, `validators`, `critic`, `engines/simulated`) is domain-agnostic.
+Each domain is a plug-in behind the registry in [`domains.py`](src/selfcorrect/domains.py):
+`invoices/` (schema + `Decimal` money math), `sqlq/` (executes the candidate SQL against an
+in-memory stdlib `sqlite3` fixture and checks columns, row count, and a result checksum),
+`cua/` (executes a proposed action sequence against a simulated booking UI). The core's
+import cleanliness — no `anthropic`, no `pydantic`, no domain package pulled in by
+`import selfcorrect` — is enforced by fresh-subprocess `sys.modules` assertions in
+`tests/test_optional_anthropic.py`.
 
-"The core is domain-agnostic" is only a claim until a second domain runs through it
-untouched. `selfcorrect/sqlq/` is **text-to-SQL** over a fixture sqlite database
-(stdlib only): the validator executes the candidate query and checks it against
-per-task acceptance criteria — expected columns, row count, and a result checksum —
-derived once from the gold queries, so in-loop validation verifies without ever
-seeing the answer.
+---
 
-```bash
-uv run python -m selfcorrect demo  --domain sqlq          # watch a query get repaired
-uv run python -m selfcorrect bench --domain sqlq --ablation --out bench_out_sqlq
-```
+## Results
 
-12 queries, seed 42, max 3 attempts — simulated engine, same disclaimer as above:
+Simulated engine, seed 42, max 3 attempts.
 
-| configuration | fully valid | mean attempts |
-|---|---:|---:|
-| self-correction OFF | 25.0% | 1.00 |
-| self-correction ON (targeted critic) | **91.7%** | 1.92 |
-| ablation: generic "please fix it" critic | 25.0% | 2.50 |
+| Domain | Corpus | OFF | ON (targeted critic) | Ablation: generic critic | Source |
+|---|---:|---:|---:|---:|---|
+| Invoice extraction | 24 | 58.3% | **95.8%** | 58.3% | `bench_out/results.md` ¹ |
+| Text-to-SQL | 12 | 25.0% | **91.7%** | 25.0% | [`bench_out_sqlq/results.md`](bench_out_sqlq/results.md) |
+| Computer use | 10 | 50.0% | **90.0%** | 50.0% | [`bench_out_cua/results.md`](bench_out_cua/results.md) |
 
-Same shape as the invoice result, new domain, zero changes to the loop, CLI, or
-benchmark: the generic critic exactly matches OFF — the lift is targeted feedback,
-not retries. (The one ON failure is a two-error task whose deterministic repair
-roll misses — bounded failure, reported loudly.) Full tables: `bench_out_sqlq/`.
+¹ `bench_out/` is gitignored, so the invoice row has no committed artifact to diff against;
+regenerate it with `python3 -m selfcorrect bench --ablation --out bench_out`.
 
-### And a third: computer-use agents
-
-`selfcorrect/cua/` extends the same loop to **computer-use**: the agent must drive a
-simulated booking UI (a declarative page/element state machine — search, results,
-checkout) to a goal state. The validator *executes* the proposed action sequence and
-turns what real CUA agents get wrong into structured violations: unknown targets,
-actions on the wrong element type, precondition failures (paying before filling
-required fields), stalled flows, and wrong final bookings.
+The two committed tables are byte-reproducible — regenerate and diff:
 
 ```bash
-uv run python -m selfcorrect demo  --domain cua           # watch an agent fix its own actions
-uv run python -m selfcorrect bench --domain cua --ablation --out bench_out_cua
+python3 -m selfcorrect bench --domain sqlq --ablation --out /tmp/bench_sqlq
+diff /tmp/bench_sqlq/results.md bench_out_sqlq/results.md   # no output
 ```
 
-10 booking flows, seed 42, max 3 attempts — simulated engine, same disclaimer:
+(`results.json` differs in one field, `out_dir`, which records the path you passed.)
 
-| configuration | fully valid | mean attempts |
-|---|---:|---:|
-| self-correction OFF | 50.0% | 1.00 |
-| self-correction ON (targeted critic) | **90.0%** | 1.60 |
-| ablation: generic "please fix it" critic | 50.0% | 2.00 |
+### What the ablation does and does not show
 
-Three domains, one loop, one finding: **the generic critic exactly matches OFF in all
-three** — self-correction is worth nothing without targeted, structured feedback.
+Swapping `TemplateCritic` for `GenericCritic` changes exactly one thing: the feedback the
+engine receives. Read the result carefully, because the headline is weaker than it looks:
 
-## Use it as a Claude Code skill
+**The generic arm scoring exactly the OFF rate is true by construction, not an empirical
+discovery.** `GenericCritic` emits a single `Feedback` with `violation_code="GENERIC"`, and
+the simulated engine clears an injected error only when some feedback item carries a code
+listed in that error's `fixed_by` set — `GENERIC` is in none of them
+(`src/selfcorrect/engines/simulated.py`, `_surviving`). The fault injector encodes the
+assumption "feedback repairs an error only if it names the error." That assumption is the
+thesis of the repo; the benchmark does not test it.
 
-The loop's protocol is packaged as a portable skill in [`skills/self-correct/`](skills/self-correct/):
-derive executable validators *first*, generate, validate by **running** the checks, feed back
-targeted per-violation repair instructions, retry bounded, fail loudly with the best attempt.
+What the benchmark *does* establish:
 
-```bash
-cp -r skills/self-correct ~/.claude/skills/    # then: /self-correct in Claude Code
-```
+- The wiring is honest end to end — violations reach the critic, rendered instructions (not
+  raw violations) reach the engine, and OFF / ON / generic differ in nothing else.
+- The **cost** of untargeted retrying is measured, not assumed. On text-to-SQL the generic
+  arm burns 2.50 mean attempts against ON's 1.92, and 23.2s of simulated latency against
+  17.9s — full budget spent, zero tasks recovered.
+- The ON arm's lift survives per-field scoring, not just the all-or-nothing valid rate: on
+  text-to-SQL, macro field accuracy goes 66.7% → 97.2%.
 
-## Engines
+Attempts to converge on text-to-SQL (from
+[`bench_out_sqlq/results.md`](bench_out_sqlq/results.md); a chart version is at
+[`bench_out_sqlq/attempts.svg`](bench_out_sqlq/attempts.svg)):
 
-| engine | cost | needs | use |
-|---|---|---|---|
-| `simulated` (default) | $0 | nothing | CI, reproducible benchmarks, demos |
-| `hermes` | $0 | [Ollama](https://ollama.com) + `ollama pull hermes3` | real local LLM (NousResearch Hermes 3 8B) |
-| `anthropic` | API usage | `pip install "selfcorrect[anthropic]"` + `ANTHROPIC_API_KEY` | Claude — worker `claude-opus-4-8`, critic `claude-haiku-4-5` |
+| configuration | 1 | 2 | 3 | failed |
+|---|---:|---:|---:|---:|
+| off | 3 | 0 | 0 | 9 |
+| on | 3 | 7 | 1 | 1 |
+| on_generic | 3 | 0 | 0 | 9 |
 
-### Hermes (free local model)
+---
 
-```bash
-# one-time: install Ollama from https://ollama.com, then
-ollama pull hermes3
-uv run python -m selfcorrect demo --engine hermes --task inv_004
-uv run python -m selfcorrect bench --engine hermes
-```
-
-Hermes 3 is structured-output trained; the engine constrains generation with a JSON
-schema via Ollama's `format` parameter and talks to `localhost:11434` using only the
-standard library.
-
-### Claude (Anthropic API)
-
-```python
-from selfcorrect import SelfCorrectingAgent
-from selfcorrect.engines import get_engine
-from selfcorrect.invoices import build_critic, build_validator, load_tasks
-
-agent = SelfCorrectingAgent(
-    engine=get_engine("anthropic"),  # claude-opus-4-8 via structured outputs
-    validator=build_validator(),
-    critic=build_critic(),
-    max_attempts=3,
-)
-result = agent.run(load_tasks()[3])
-```
-
-## Repository layout
+## Repo map
 
 ```
-src/selfcorrect/        the framework (zero runtime dependencies)
-  engines/              simulated | hermes (Ollama) | anthropic (optional extra)
-  invoices/             flagship domain plug-in: schema, rules, templates, corpus, catalog
-  sqlq/                 second domain plug-in: text-to-SQL over a fixture sqlite DB
-  cua/                  third domain plug-in: computer use over a simulated booking UI
-skills/self-correct/    the loop as an installable Claude Code skill
-tools/                  export_demo_traces.py -> docs/demo_data.js (real recorded runs)
-tests/                  107 tests: unit, determinism, e2e lift bounds, import-boundary
-examples/run_demo.py    scripted walkthrough
-docs/                   the blog post + interactive demo (GitHub Pages)
+src/selfcorrect/loop.py        the bounded generate → validate → critique → repair loop
+src/selfcorrect/critic.py      TemplateCritic (targeted) + GenericCritic (ablation control)
+src/selfcorrect/validators.py  domain-agnostic validator building blocks
+src/selfcorrect/domains.py     plug-in registry: invoices | sqlq | cua
+src/selfcorrect/engines/       simulated (default) | hermes (Ollama) | anthropic (extra)
+src/selfcorrect/bench.py       OFF vs ON vs ablation → results.json / results.md / SVG / traces.jsonl
+skills/self-correct/           the loop's protocol as an installable Claude Code skill
+tests/                         107 tests: validators, critic, loop, per-domain, bench e2e
+                               (lift bounds), determinism, import cleanliness
+docs/                          the write-up plus the recorded-trace demo page (GitHub Pages)
 ```
 
-## Development
+---
 
-```bash
-uv sync --dev
-uv run pytest -q          # 107 tests, no network
-uv run ruff check src tests examples
-```
+## Limitations / what this is not
+
+- **The benchmark numbers are not model evaluations.** The default engine is a
+  deterministic fault injector that makes realistic, feedback-addressable mistakes. It
+  measures the *mechanics* of self-correction — not any LLM's accuracy. Every generated
+  `results.md` says so on its third line.
+- **The ablation is a design check, not evidence.** See above: the generic critic's floor
+  falls out of the simulator's repair model. Running the same benchmark against a real
+  engine (`--engine hermes` or `--engine anthropic`) is what would turn it into evidence,
+  and that has not been done here.
+- **It only works where correctness is executable.** The whole approach rests on a
+  validator that can mechanically decide "wrong." For open-ended generation with no
+  checkable contract, there is nothing to feed back.
+- **Corpora are small and synthetic** — 24 invoices, 12 queries, 10 booking flows. Enough
+  to show the OFF/ON/ablation gap reproducibly; not enough to claim a general effect size.
+- **The live demo is a replay, not a simulation.** It steps through recorded Python runs;
+  it does not re-run the loop in your browser.
+- **This is not an agent framework.** No planning, no tool use, no multi-agent
+  orchestration, no memory. One loop, done carefully, with the trace kept.
+
+---
 
 ## License
 

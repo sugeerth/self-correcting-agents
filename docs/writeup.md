@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "Self-Correcting Agents: Teaching an Agent to Catch and Fix Its Own Mistakes"
+permalink: /writeup/
 description: "A generate → validate → critique → repair loop, benchmarked on invoice extraction — runs entirely free, no API keys."
 ---
 

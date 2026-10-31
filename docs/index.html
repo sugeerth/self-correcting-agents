@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Correcting Agents</title>
+<meta name="description" content="A zero-dependency Python framework that catches an agent's wrong output with executable checks and feeds it a specific fix instead of blindly retrying.">
+<style>
+  :root {
+    --bg: #f6f7f8; --surface: #fff; --text: #1b1f24; --muted: #5a636e; --border: #d9dee3;
+    --accent: #2563c4; --ok: #1a7f37; --bad: #c03434;
+    --term-bg: #10151c; --term-text: #d7dee6; --term-dim: #7d8894; --term-ok: #4cc38a; --term-bad: #ff7b72;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --surface: #161b22; --text: #e6edf3; --muted: #8b949e; --border: #2d333b;
+      --accent: #58a6ff; --ok: #3fb950; --bad: #f47067;
+      --term-bg: #090c10; --term-text: #c9d4de; --term-dim: #6b7681;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+  a { color: var(--accent); }
+  header.hero { padding: 64px 0 40px; }
+  h1 { font-size: clamp(2rem, 6vw, 3rem); line-height: 1.15; margin: 0 0 16px; }
+  .lede { font-size: 1.2rem; color: var(--muted); max-width: 40em; margin: 0 0 28px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-block; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); text-decoration: none; font-weight: 600; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  section { padding: 32px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 1.5rem; margin: 0 0 12px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 1rem; }
+  .card p { margin: 0; color: var(--muted); }
+  pre { background: var(--term-bg); color: var(--term-text); border-radius: 10px; padding: 16px;
+    overflow-x: auto; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0; }
+  .bad { color: var(--term-bad); } .ok { color: var(--term-ok); } .dim { color: var(--term-dim); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  tr:last-child td { border-bottom: 0; }
+  td.win { color: var(--ok); font-weight: 700; }
+  .note { color: var(--muted); font-size: .9rem; margin-top: 12px; }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px 12px 52px; position: relative; }
+  .steps li::before { content: counter(s); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px;
+    border-radius: 50%; background: var(--accent); color: #fff; text-align: center; font-weight: 700; font-size: .85rem; line-height: 24px; }
+  footer { padding: 32px 0 56px; color: var(--muted); border-top: 1px solid var(--border); font-size: .9rem; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } header.hero { padding-top: 40px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>Stop retrying. Start correcting.</h1>
+  <p class="lede">A small Python framework that catches an agent's bad output with executable checks and hands it a <em>specific</em> fix, instead of re-rolling the dice and hoping.</p>
+  <div class="btns">
+    <a class="btn primary" href="./demo.html">▶ Watch the loop repair itself</a>
+    <a class="btn" href="./writeup/">Read the write-up</a>
+    <a class="btn" href="https://github.com/sugeerth/self-correcting-agents">GitHub</a>
+  </div>
+</header>
+
+<section>
+  <h2>The problem</h2>
+  <p>When an LLM step fails in a pipeline it rarely crashes. It returns a plausible wrong answer: right JSON shape, right field names, and a "total" that is really the pre-discount amount. Nothing throws, and you find out weeks later from a reconciliation report. A plain retry gives the agent no new information, so it tends to make the same mistake again.</p>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><strong>Generate</strong>: the engine produces a candidate answer.</li>
+    <li><strong>Validate</strong>: deterministic checks (schema, money math in <code>Decimal</code>, SQL actually executed, UI actions replayed) emit structured violations.</li>
+    <li><strong>Critique</strong>: a critic turns each violation into targeted repair instructions.</li>
+    <li><strong>Repair</strong>: the engine retries with that feedback, up to a fixed budget. If it still fails, it fails loudly with the best attempt.</li>
+  </ol>
+  <p class="note">The engine never sees raw violations, only the critic's feedback. Validation stays mechanical.</p>
+</section>
+
+<section>
+  <h2>See it in 30 seconds</h2>
+  <pre><span class="dim">$ python3 -m selfcorrect demo --domain sqlq</span>
+Attempt 1/2
+  <span class="bad">WRONG_ROW_COUNT │ sql │ 2 -&gt; 1</span>
+  Feedback: The query runs but returns 1 rows where 2 are expected.
+            A WHERE condition is probably missing, wrong, or an
+            unrequested LIMIT is cutting rows off.
+Attempt 2/2
+  violations: none
+<span class="ok">VALID after 2 attempt(s)</span></pre>
+</section>
+
+<section>
+  <h2>Results</h2>
+  <table>
+    <thead><tr><th>Domain</th><th>Tasks</th><th>No loop</th><th>Targeted critic</th><th>Generic critic</th></tr></thead>
+    <tbody>
+      <tr><td>Invoice extraction</td><td>24</td><td>58.3%</td><td class="win">95.8%</td><td>58.3%</td></tr>
+      <tr><td>Text-to-SQL</td><td>12</td><td>25.0%</td><td class="win">91.7%</td><td>25.0%</td></tr>
+      <tr><td>Computer use</td><td>10</td><td>50.0%</td><td class="win">90.0%</td><td>50.0%</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><strong>Read this honestly:</strong> these numbers come from a seeded, deterministic fault-injection engine, not from a real model. They measure the mechanics of the loop, and the generic-critic column matches "no loop" by construction. They are not an LLM accuracy benchmark. The <a href="https://github.com/sugeerth/self-correcting-agents#what-the-ablation-does-and-does-not-show">README</a> explains this in detail.</p>
+</section>
+
+<section>
+  <h2>Why use it</h2>
+  <div class="cols">
+    <div class="card"><h3>Zero runtime dependencies</h3><p>Pure Python 3.12+. The default engine runs offline with no API keys.</p></div>
+    <div class="card"><h3>Pluggable engines</h3><p>Simulated, local Hermes via Ollama, or Claude through the Anthropic API.</p></div>
+    <div class="card"><h3>Three domains included</h3><p>Invoices, text-to-SQL, and computer use, each a plug-in behind one registry.</p></div>
+    <div class="card"><h3>Ships as a Claude skill</h3><p>The loop's protocol is installable from <code>skills/self-correct</code>.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Get started</h2>
+  <pre>git clone https://github.com/sugeerth/self-correcting-agents
+cd self-correcting-agents
+python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+python3 -m pip install -e .
+python3 -m selfcorrect demo --domain sqlq</pre>
+</section>
+
+<footer>MIT licensed · by Sugeerth Murugesan · <a href="https://github.com/sugeerth/self-correcting-agents">source</a></footer>
+</div>
+</body>
+</html>

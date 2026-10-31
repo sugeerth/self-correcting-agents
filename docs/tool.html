@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice Check &amp; Repair Prompt</title>
+<meta name="description" content="Paste an LLM-extracted invoice as JSON. Get exact validation results and a ready-to-send repair prompt. Runs entirely in your browser.">
+<style>
+  :root { --bg:#f6f7f8; --surface:#fff; --text:#1b1f24; --muted:#5a636e; --border:#d9dee3; --accent:#2563c4;
+    --ok:#1a7f37; --ok-bg:#e6f4ea; --bad:#c03434; --bad-bg:#fbeaea; --warn:#9a6700; --warn-bg:#fff4d6; --code:#eef0f2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --surface:#161b22; --text:#e6edf3; --muted:#8b949e;
+    --border:#2d333b; --accent:#58a6ff; --ok:#3fb950; --ok-bg:rgba(46,160,67,.16); --bad:#f47067;
+    --bad-bg:rgba(248,81,73,.14); --warn:#d29922; --warn-bg:rgba(210,153,34,.16); --code:#1f262e; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 16px 48px; }
+  nav { padding:16px 0; font-size:.9rem; } a { color:var(--accent); }
+  h1 { font-size:clamp(1.6rem,5vw,2.2rem); margin:8px 0; line-height:1.2; }
+  .sub { color:var(--muted); margin:0 0 20px; max-width:42em; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; min-width:0; }
+  .panel h2 { font-size:1rem; margin:0 0 8px; }
+  textarea { width:100%; height:380px; resize:vertical; border:1px solid var(--border); border-radius:8px; padding:10px;
+    background:var(--code); color:var(--text); font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  button { font:inherit; font-weight:600; padding:8px 14px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:.9rem; }
+  .badge.ok { background:var(--ok-bg); color:var(--ok); } .badge.bad { background:var(--bad-bg); color:var(--bad); }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:.9rem; }
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); vertical-align:top; overflow-wrap:anywhere; }
+  code { background:var(--code); padding:1px 5px; border-radius:4px; font-size:.85em; }
+  .sev-warn { color:var(--warn); } .sev-err { color:var(--bad); }
+  pre { white-space:pre-wrap; background:var(--code); border-radius:8px; padding:10px; margin:8px 0 0;
+    font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; max-height:300px; overflow:auto; }
+  .note { color:var(--muted); font-size:.85rem; margin-top:16px; }
+  @media (max-width:760px) { .grid { grid-template-columns:1fr; } textarea { height:260px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="./">← Self-Correcting Agents</a> · <a href="./demo.html">Trace replay</a> · <a href="./writeup/">Write-up</a></nav>
+<h1>Invoice check &amp; repair prompt</h1>
+<p class="sub">Paste an invoice your LLM extracted (JSON). The same rules the <code>selfcorrect</code> framework uses are applied with exact decimal math, and each failure becomes a targeted repair instruction you can send straight back to your model. Nothing leaves your browser.</p>
+
+<div class="grid">
+  <div class="panel">
+    <h2>Extracted invoice (JSON)</h2>
+    <textarea id="in" spellcheck="false" aria-label="Invoice JSON"></textarea>
+    <div class="row">
+      <button class="primary" id="run">Check</button>
+      <button id="sample">Load broken sample</button>
+      <button id="fmt">Format JSON</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Result</h2>
+    <div id="status" aria-live="polite"><span class="badge">Waiting for input</span></div>
+    <div id="viol"></div>
+    <div id="fbWrap" hidden>
+      <h2 style="margin-top:14px">Repair prompt</h2>
+      <pre id="fb"></pre>
+      <div class="row"><button id="copy">Copy prompt</button></div>
+    </div>
+  </div>
+</div>
+<p class="note">Checks: required fields and types, ISO date, currency code, non-negative amounts, quantity × unit price = amount, line items sum to subtotal, subtotal + tax = total (tolerance 0.01). Rules mirror <code>src/selfcorrect/invoices/rules.py</code>; the JavaScript port is a convenience copy, so the Python package stays the reference implementation.</p>
+</div>
+
+<script>
+(function () {
+  var CURRENCIES = new Set("AED ARS AUD BRL CAD CHF CLP CNY COP CZK DKK EGP EUR GBP HKD HUF IDR ILS INR JPY KRW MXN MYR NGN NOK NZD PEN PHP PLN RON RUB SAR SEK SGD THB TRY TWD USD VND ZAR".split(" "));
+  var TOL = 10000n; // 0.01 at scale 1e6
+  var SCALE = 1000000n;
+  var TEMPLATES = {
+    MISSING_FIELD: "The required field '{field}' is missing from your output. Re-read the document and extract it ({expected}). Invoices label things inconsistently — check synonyms like 'invoice no.', 'bill date', or 'amount due' before concluding it is absent.",
+    WRONG_TYPE: "The field '{field}' has the wrong type: expected {expected} but got {actual}. Return it as the correct JSON type — numbers must be bare numerals with no currency symbols, thousands separators, or quotes, and never booleans.",
+    EMPTY_LINE_ITEMS: "'{field}' is empty, but every invoice bills at least one row. Re-scan the items table between the header and the totals section and extract every row with its description, quantity, unit_price, and amount.",
+    DATE_UNPARSEABLE: "The value of '{field}' ({actual}) is not a parseable date. Re-read the document and return it as {expected} (ISO YYYY-MM-DD). Watch for ambiguous day/month order and spelled-out months like '3rd Mar 2024'.",
+    CURRENCY_INVALID: "The currency in '{field}' ({actual}) is not a valid code. Return {expected} — a three-letter uppercase ISO 4217 code. Map symbols: '$' -> 'USD', '€' -> 'EUR', '£' -> 'GBP'.",
+    NEGATIVE_AMOUNT: "The field '{field}' is negative ({actual}), but invoice amounts must be non-negative. You may have misread a discount, credit memo, or a parenthesized number — re-read that figure and extract the actual charged amount.",
+    LINE_ITEM_MATH: "In '{field}', quantity × unit_price should equal {expected} but the extracted amount is {actual}. Re-read that row — a digit was likely misread, or unit_price and amount were swapped.",
+    LINE_ITEMS_SUM: "Line item amounts sum to {actual} but the stated subtotal is {expected}. You likely missed a line item or misread one amount — re-scan the items section and extract every row.",
+    TOTAL_MISMATCH: "The extracted total ({actual}) does not equal subtotal + tax ({expected}). Invoices often show several candidate amounts ('balance due', 'amount before discount', 'grand total') — re-read the document and pick the final payable total.",
+    DATE_IMPLAUSIBLE: "The date '{actual}' has an implausible year. Expected {expected}. Re-read the date, watching for day/month order and two-digit years."
+  };
+
+  // Exact decimal parsing: numbers -> BigInt scaled by 1e6 (via the number's shortest string form).
+  function toScaled(v) {
+    if (typeof v !== "number" || !isFinite(v)) return null;
+    var s = String(v), m = /^(-?)(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/i.exec(s);
+    if (!m) return null;
+    var digits = m[2] + (m[3] || ""), exp = (m[4] ? parseInt(m[4], 10) : 0) - (m[3] ? m[3].length : 0) + 6;
+    var n = BigInt(digits);
+    if (exp >= 0) n *= 10n ** BigInt(exp); else n /= 10n ** BigInt(-exp);
+    return m[1] ? -n : n;
+  }
+  function fmt(n) {
+    var neg = n < 0n; if (neg) n = -n;
+    var whole = n / SCALE, frac = String(n % SCALE).padStart(6, "0").replace(/0+$/, "");
+    if (frac.length < 2) frac = (frac + "00").slice(0, 2);
+    return (neg ? "-" : "") + whole + "." + frac;
+  }
+  function abs(n) { return n < 0n ? -n : n; }
+  function typeName(v) { return v === null ? "null" : Array.isArray(v) ? "list" : typeof v === "number" ? "number" : typeof v === "string" ? "str" : typeof v === "object" ? "dict" : typeof v; }
+
+  function validate(inv) {
+    var out = [];
+    function add(code, field, expected, actual, sev) { out.push({ code: code, field: field, expected: expected, actual: actual, sev: sev || "error" }); }
+    if (typeName(inv) !== "dict") { add("WRONG_TYPE", "(root)", "dict", typeName(inv)); return out; }
+    var top = { vendor: "str", date: "str", currency: "str", line_items: "list", subtotal: "number", tax: "number", total: "number" };
+    Object.keys(top).forEach(function (k) {
+      if (!(k in inv)) add("MISSING_FIELD", k, top[k], null);
+      else if (typeName(inv[k]) !== top[k]) add("WRONG_TYPE", k, top[k], typeName(inv[k]));
+    });
+    var items = Array.isArray(inv.line_items) ? inv.line_items : null;
+    if (items && items.length === 0) add("EMPTY_LINE_ITEMS", "line_items", "at least one row", "0 rows");
+    var itemFields = { description: "str", quantity: "number", unit_price: "number", amount: "number" };
+    if (items) items.forEach(function (it, i) {
+      if (typeName(it) !== "dict") { add("WRONG_TYPE", "line_items[" + i + "]", "dict", typeName(it)); return; }
+      Object.keys(itemFields).forEach(function (k) {
+        var p = "line_items[" + i + "]." + k;
+        if (!(k in it)) add("MISSING_FIELD", p, itemFields[k], null);
+        else if (typeName(it[k]) !== itemFields[k]) add("WRONG_TYPE", p, itemFields[k], typeName(it[k]));
+      });
+    });
+    if (typeof inv.date === "string") {
+      var dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(inv.date), d = dm && new Date(Date.UTC(+dm[1], +dm[2] - 1, +dm[3]));
+      if (!dm || d.getUTCFullYear() !== +dm[1] || d.getUTCMonth() !== +dm[2] - 1 || d.getUTCDate() !== +dm[3]) add("DATE_UNPARSEABLE", "date", "YYYY-MM-DD", inv.date);
+      else if (+dm[1] < 2000 || +dm[1] > 2030) add("DATE_IMPLAUSIBLE", "date", "a year between 2000 and 2030", inv.date, "warning");
+    }
+    if (typeof inv.currency === "string" && !CURRENCIES.has(inv.currency)) add("CURRENCY_INVALID", "currency", "an ISO-4217 code such as USD", inv.currency);
+    // Business rules skip silently on schema problems (anti-cascade), like the Python package.
+    function neg(path, v) { var n = toScaled(v); if (n !== null && n < 0n) add("NEGATIVE_AMOUNT", path, ">= 0", fmt(n)); }
+    if (items) items.forEach(function (it, i) {
+      if (typeName(it) === "dict") ["quantity", "unit_price", "amount"].forEach(function (k) { neg("line_items[" + i + "]." + k, it[k]); });
+    });
+    ["subtotal", "tax", "total"].forEach(function (k) { neg(k, inv[k]); });
+    if (items) items.forEach(function (it, i) {
+      if (typeName(it) !== "dict") return;
+      var q = toScaled(it.quantity), u = toScaled(it.unit_price), a = toScaled(it.amount);
+      if (q === null || u === null || a === null) return;
+      var c = q * u / SCALE;
+      if (abs(c - a) > TOL) add("LINE_ITEM_MATH", "line_items[" + i + "].amount", fmt(c), fmt(a));
+    });
+    if (items && items.length) {
+      var sum = 0n, ok = true;
+      items.forEach(function (it) { var a = typeName(it) === "dict" ? toScaled(it.amount) : null; if (a === null) ok = false; else sum += a; });
+      var st = toScaled(inv.subtotal);
+      if (ok && st !== null && abs(sum - st) > TOL) add("LINE_ITEMS_SUM", "subtotal", fmt(st), fmt(sum));
+    }
+    var s = toScaled(inv.subtotal), t = toScaled(inv.tax), tot = toScaled(inv.total);
+    if (s !== null && t !== null && tot !== null && abs(s + t - tot) > TOL) add("TOTAL_MISMATCH", "total", fmt(s + t), fmt(tot));
+    return out;
+  }
+
+  function render(tpl, v) {
+    return tpl.replace(/\{(field|expected|actual)\}/g, function (_, k) { var x = v[k]; return x === null || x === undefined ? "?" : x; });
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var SAMPLE = {
+    vendor: "Northwind Supplies", date: "2025-02-02", currency: "EUR",
+    line_items: [
+      { description: "Industrial shelving unit", quantity: 6, unit_price: 2335.03, amount: 14010.18 },
+      { description: "Safety goggles, 10-pack", quantity: 12, unit_price: 1199.85, amount: 14398.2 },
+      { description: "Cat6 patch cable, 10m", quantity: 11, unit_price: 63.66, amount: 7000.26 }
+    ],
+    subtotal: 31438.02, tax: 6287.6, total: 31438.02
+  };
+
+  function run() {
+    var inv, status = $("status"), viol = $("viol"), wrap = $("fbWrap");
+    try { inv = JSON.parse($("in").value); }
+    catch (e) {
+      status.innerHTML = '<span class="badge bad">Not valid JSON</span> <span class="note">' + esc(e.message) + "</span>";
+      viol.innerHTML = ""; wrap.hidden = true; return;
+    }
+    var vs = validate(inv);
+    var errs = vs.filter(function (v) { return v.sev === "error"; });
+    if (!vs.length) {
+      status.innerHTML = '<span class="badge ok">Valid — no violations</span>';
+      viol.innerHTML = ""; wrap.hidden = true; return;
+    }
+    status.innerHTML = '<span class="badge ' + (errs.length ? "bad" : "ok") + '">' + errs.length + " error(s)" + (vs.length > errs.length ? ", " + (vs.length - errs.length) + " warning(s)" : "") + "</span>";
+    viol.innerHTML = "<table><thead><tr><th>Code</th><th>Field</th><th>Expected</th><th>Actual</th></tr></thead><tbody>" +
+      vs.map(function (v) {
+        return '<tr><td class="' + (v.sev === "error" ? "sev-err" : "sev-warn") + '"><code>' + esc(v.code) + "</code></td><td><code>" + esc(v.field) + "</code></td><td>" + esc(v.expected) + "</td><td>" + esc(v.actual === null ? "—" : v.actual) + "</td></tr>";
+      }).join("") + "</tbody></table>";
+    var lines = vs.map(function (v) { return "• " + render(TEMPLATES[v.code], v); });
+    $("fb").textContent = "Your previous extraction failed these checks:\n\n" + lines.join("\n") +
+      "\n\nFix only what is wrong, re-read the source document, and return ONLY one valid JSON object matching the invoice schema.";
+    wrap.hidden = false;
+  }
+
+  $("run").onclick = run;
+  $("sample").onclick = function () { $("in").value = JSON.stringify(SAMPLE, null, 2); run(); };
+  $("fmt").onclick = function () { try { $("in").value = JSON.stringify(JSON.parse($("in").value), null, 2); } catch (e) { run(); } };
+  $("copy").onclick = function () {
+    var b = $("copy"), txt = $("fb").textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { b.textContent = "Copied"; }, function () {
+      var r = document.createRange(); r.selectNodeContents($("fb")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected — press Ctrl/Cmd+C";
+    });
+    setTimeout(function () { b.textContent = "Copy prompt"; }, 2500);
+  };
+  $("in").value = JSON.stringify(SAMPLE, null, 2);
+  run();
+})();
+</script>
+</body>
+</html>

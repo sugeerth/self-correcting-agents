@@ -8,7 +8,7 @@
 ![Runtime dependencies 0](https://img.shields.io/badge/runtime%20deps-0-lightgrey)
 
 **[Watch the loop repair itself](https://sugeerth.github.io/self-correcting-agents/demo.html)** — a step-through replay of real recorded runs, covering all 46 corpus tasks across the three domains.
-**[Write-up](https://sugeerth.github.io/self-correcting-agents/)** ([markdown source](docs/index.md))
+**[Write-up](https://sugeerth.github.io/self-correcting-agents/writeup/)** ([markdown source](docs/writeup.md))
 
 > When an LLM step fails in a pipeline, it rarely crashes. It returns a plausible-looking wrong answer: right JSON shape, right field names, and a total that is actually the pre-discount amount. Nothing throws, and you find out weeks later from a reconciliation report. The reflex fix is "add retries" — but a naive retry re-rolls the dice with no new information, so the agent that produced the wrong total produces it again. This repo implements the alternative and measures the mechanics of it.
 
